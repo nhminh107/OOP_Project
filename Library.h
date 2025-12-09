@@ -33,5 +33,9 @@ using namespace Gdiplus;
 #include "Image.h"
 #include "Parser.h"
 #include "Render.h"
+#include "Shape.h"
+#include "ShapeFactory.h"
+#include "Path.h"
+#include "Group.h"
 
 #endif 
