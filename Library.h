@@ -30,4 +30,8 @@ using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
 
+#include "Image.h"
+#include "Parser.h"
+#include "Render.h"
+
 #endif 

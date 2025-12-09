@@ -128,10 +128,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Render.cpp" />
     <ClCompile Include="SVG_Reader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Library.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="Shape.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
