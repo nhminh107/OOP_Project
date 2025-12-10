@@ -37,5 +37,8 @@ using namespace Gdiplus;
 #include "ShapeFactory.h"
 #include "Path.h"
 #include "Group.h"
+#include "Circle.h"
+#include "Ellipse.h"
+#include "Polyline.h"
 
 #endif 
