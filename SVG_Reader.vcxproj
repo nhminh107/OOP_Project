@@ -128,15 +128,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Group.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Path.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Polyline.cpp" />
     <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="SVG_Reader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Group.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Library.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="Path.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Ellipse.h" />
     <ClInclude Include="Image.h" />
@@ -145,6 +156,7 @@
     <ClInclude Include="Polyline.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="ShapeFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
