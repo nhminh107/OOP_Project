@@ -12,7 +12,6 @@
 #include <locale>
 #include <codecvt>
 #include "rapidxml.hpp"
-#include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
 #include <SDKDDKVer.h>
