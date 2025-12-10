@@ -1,5 +1,5 @@
 #include "Library.h"
-figure* factoryfigure::getFigure(string name) {
+Shape* factoryfigure::getFigure(string name) {
 	int num = figureId[name];
 	switch (num) {
 	case 1: {

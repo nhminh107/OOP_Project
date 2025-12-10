@@ -1,6 +1,6 @@
 #include "Library.h"
 
-polygon::polygon() : figure() {
+polygon::polygon() : Shape() {
 	Vers = {};
 }
 

@@ -43,5 +43,7 @@ using namespace Gdiplus;
 #include "Color.h"
 #include "Polygon.h"
 #include "Rectangle.h"
-
+#include "Text.h"
+#include "Line.h"
+#include "Viewbox.h"
 #endif 

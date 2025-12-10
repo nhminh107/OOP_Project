@@ -1,6 +1,6 @@
 #include "Library.h"
 
-rectangle::rectangle() : figure() {
+rectangle::rectangle() : Shape() {
 	width = height = 0;
 	root.setX(0);
 	root.setY(0);

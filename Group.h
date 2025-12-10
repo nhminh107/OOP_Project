@@ -1,8 +1,8 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
 
-class group :public figure {
-	vector<figure*> figureArray;
+class group :public Shape {
+	vector<Shape*> figureArray;
 	group* parent;
 public:
 	group();
@@ -10,11 +10,11 @@ public:
 	group& operator = (const group&);
 
 	void setParent(group*);
-	void setFigureArray(vector<figure*>);
+	void setFigureArray(vector<Shape*>);
 	group* getParent();
-	vector<figure*> getFigureArray();
+	vector<Shape*> getFigureArray();
 
-	void addFigure(figure*);
+	void addFigure(Shape*);
 };
 
 #endif

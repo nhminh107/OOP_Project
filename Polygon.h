@@ -1,7 +1,7 @@
 #ifndef _POLYGON_H_
 #define _POLYGON_H_
 
-class polygon : public figure {
+class polygon : public Shape {
 private:
 	vector<point> Vers;
 

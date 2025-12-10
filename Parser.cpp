@@ -76,7 +76,7 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 	}
 }
 
-void parser::processProperty(string name, string property, string textName, figure*& fig) {
+void parser::processProperty(string name, string property, string textName, Shape*& fig) {
 	fig->setName(name);
 	fig->setTextName(textName);
 	fig->setLine(property);
@@ -485,7 +485,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 				getline(fin, temp, '>');
 			}
 
-			figure* fig = factory.getFigure(name);
+			Shape* fig = factory.getFigure(name);
 			if (fig) {
 				if (!groupStack.empty()) {
 					property = " " + groupStack.top() + " " + property + " ";

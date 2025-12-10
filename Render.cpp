@@ -6,7 +6,7 @@ using namespace std;
 
 void renderer::renderFigure(Graphics& graphics, group* root) {
 	factoryfigure factory;
-	for (figure* fig : root->getFigureArray()) {
+	for (Shape* fig : root->getFigureArray()) {
 		int num = factory.getFigureId()[fig->getName()];
 
 		switch (num)

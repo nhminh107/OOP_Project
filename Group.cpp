@@ -1,6 +1,6 @@
 #include "Library.h"
 
-group::group() :figure() {
+group::group() :Shape() {
 	figureArray = {};
 }
 
@@ -16,7 +16,7 @@ group::group(const group& grp) {
 	this->figureArray = grp.figureArray;
 }
 
-void group::addFigure(figure* fig) {
+void group::addFigure(Shape* fig) {
 	this->figureArray.push_back(fig);
 }
 
@@ -24,7 +24,7 @@ void group::setParent(group* parent) {
 	this->parent = parent;
 }
 
-void group::setFigureArray(vector<figure*> figureArrray) {
+void group::setFigureArray(vector<Shape*> figureArrray) {
 	this->figureArray = figureArray;
 }
 
@@ -32,6 +32,6 @@ group* group::getParent() {
 	return this->parent;
 }
 
-vector<figure*> group::getFigureArray() {
+vector<Shape*> group::getFigureArray() {
 	return this->figureArray;
 }
