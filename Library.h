@@ -33,5 +33,8 @@ using namespace Gdiplus;
 #include "Image.h"
 #include "Parser.h"
 #include "Render.h"
+#include "Circle.h"
+#include "Ellipse.h"
+#include "Polyline.h"
 
 #endif 
