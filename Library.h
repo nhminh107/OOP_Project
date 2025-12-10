@@ -40,5 +40,9 @@ using namespace Gdiplus;
 #include "Circle.h"
 #include "Ellipse.h"
 #include "Polyline.h"
+#include "Point.h"
+#include "Color.h"
+#include "Polygon.h"
+#include "Rectangle.h"
 
 #endif 
