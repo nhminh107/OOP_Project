@@ -66,6 +66,12 @@
     <ClCompile Include="Rectangle.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library.h">
@@ -113,5 +119,8 @@
     <ClInclude Include="Polygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Color.txt" />
   </ItemGroup>
 </Project>
