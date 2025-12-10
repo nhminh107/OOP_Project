@@ -1,7 +1,7 @@
 #ifndef _RECTANGLE_H_
 #define _RECTANGLE_H_
 
-class rectangle : public figure {
+class rectangle : public Shape {
 private:
 	point root;
 	float width, height;

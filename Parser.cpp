@@ -76,7 +76,7 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 	}
 }
 
-void parser::processProperty(string name, string property, string textName, figure*& fig) {
+void parser::processProperty(string name, string property, string textName, Shape*& fig) {
 	fig->setName(name);
 	fig->setTextName(textName);
 	fig->setLine(property);
@@ -210,7 +210,7 @@ void parser::processProperty(string name, string property, string textName, figu
 	}
 }
 
-void parser::parseItem(group* root, string fileName, viewbox& vb) {
+void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 	ifstream fin(fileName, ios::in);
 	if (!fin.is_open()) {
 		cout << "Error Opening SVG File\n";
@@ -226,7 +226,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 	vector<string> groupVct;
 
 	groupStack.push(" ");
-	group* curGroup = root;
+	SVGGroup* curGroup = root;
 
 	bool openDef = false, openLinear = false, openRadial = false;
 	bool closeLinear = false, closeRadial = false;
@@ -465,7 +465,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 			property = " " + groupStack.top() + " " + property + " ";
 			groupStack.push(property);
 
-			group* newGroup = new group();
+			SVGGroup* newGroup = new SVGGroup();
 			newGroup->setName("g");
 			newGroup->setParent(curGroup);
 			curGroup->addFigure(newGroup);
@@ -485,7 +485,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 				getline(fin, temp, '>');
 			}
 
-			figure* fig = factory.getFigure(name);
+			Shape* fig = factory.getFigure(name);
 			if (fig) {
 				if (!groupStack.empty()) {
 					property = " " + groupStack.top() + " " + property + " ";

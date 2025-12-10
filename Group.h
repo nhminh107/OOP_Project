@@ -1,20 +1,20 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
 
-class group :public figure {
-	vector<figure*> figureArray;
-	group* parent;
+class SVGGroup :public Shape {
+	vector<Shape*> figureArray;
+	SVGGroup* parent;
 public:
-	group();
-	group(const group&);
-	group& operator = (const group&);
+	SVGGroup();
+	SVGGroup(const SVGGroup&);
+	SVGGroup& operator = (const SVGGroup&);
 
-	void setParent(group*);
-	void setFigureArray(vector<figure*>);
-	group* getParent();
-	vector<figure*> getFigureArray();
+	void setParent(SVGGroup*);
+	void setFigureArray(vector<Shape*>);
+	SVGGroup* getParent();
+	vector<Shape*> getFigureArray();
 
-	void addFigure(figure*);
+	void addFigure(Shape*);
 };
 
 #endif

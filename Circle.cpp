@@ -1,18 +1,18 @@
 #include "Library.h"
 
-circle::circle() : Shape() {
+Circle::Circle() : Shape() {
 	this->setCenter(0, 0);
 	this->setRx(0);
 	this->setRy(0);
 }
 
-circle::~circle() {
+Circle::~Circle() {
 	this->setCenter(0, 0);
 	this->setRx(0);
 	this->setRy(0);
 }
 
-void circle::updateProperty() {
+void Circle::updateProperty() {
 	stringstream ss(line_str);
 	string attribute, val, temp;
 
@@ -30,27 +30,27 @@ void circle::updateProperty() {
 			this->center.setY((stof(val)));
 	}
 }
-point circle::getCenter() {
+point Circle::getCenter() {
 	return this->center;
 }
 
-float circle::getRx() {
+float Circle::getRx() {
 	return this->rx;
 }
 
-float circle::getRy() {
+float Circle::getRy() {
 	return this->ry;
 }
 
-void circle::setCenter(float x, float y) {
+void Circle::setCenter(float x, float y) {
 	this->center.setX(x);
 	this->center.setY(y);
 }
 
-void circle::setRx(float rx) {
+void Circle::setRx(float rx) {
 	this->rx = rx;
 }
 
-void circle::setRy(float ry) {
+void Circle::setRy(float ry) {
 	this->ry = ry;
 }

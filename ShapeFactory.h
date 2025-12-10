@@ -7,7 +7,7 @@ private:
 
 public:
 	factoryfigure();
-	figure* getFigure(string name);
+	Shape* getFigure(string name);
 	unordered_map<string, int> getFigureId();
 };
 

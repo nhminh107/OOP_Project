@@ -4,7 +4,7 @@
 class image {
 private:
 	string fileName;
-	group* root;
+	SVGGroup* root;
 
 public:
 	image(string);

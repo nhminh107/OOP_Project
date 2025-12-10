@@ -1,13 +1,13 @@
 #ifndef _POLYGON_H_
 #define _POLYGON_H_
 
-class polygon : public figure {
+class Polygon : public Shape {
 private:
 	vector<point> Vers;
 
 public:
-	polygon();
-	~polygon();
+	Polygon();
+	~Polygon();
 
 	void setVers(vector<point>);
 	vector<point> getVers();

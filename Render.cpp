@@ -4,12 +4,12 @@
 #define Pakka 1.5707963267948966
 using namespace std;
 
-void renderer::renderFigure(Graphics& graphics, group* root) {
+void renderer::renderFigure(Graphics& graphics, SVGGroup* root) {
 	factoryfigure factory;
-	for (figure* fig : root->getFigureArray()) {
+	for (Shape* fig : root->getFigureArray()) {
 		int num = factory.getFigureId()[fig->getName()];
 
-		switch (num)
+		switch (num)	
 		{
 		case 1:
 		{
@@ -18,23 +18,23 @@ void renderer::renderFigure(Graphics& graphics, group* root) {
 			break;
 		}
 		case 2: case 3: {
-			ellipse* ellipses = dynamic_cast<ellipse*>(fig);
+			Ellipse* ellipses = dynamic_cast<Ellipse*>(fig);
 			drawEllipse(graphics, ellipses);
 			break;
 		}
 		case 4:
 		{
-			line* lines = dynamic_cast<line*>(fig);
+			Line* lines = dynamic_cast<Line*>(fig);
 			drawLine(graphics, lines);
 			break;
 		}
 		case 5: {
-			polyline* polylines = dynamic_cast<polyline*>(fig);
+			Polyline* polylines = dynamic_cast<Polyline*>(fig);
 			drawPolyline(graphics, polylines);
 			break;
 		}
 		case 6: {
-			polygon* polygons = dynamic_cast<polygon*>(fig);
+			Polygon* polygons = dynamic_cast<Polygon*>(fig);
 			drawPolygon(graphics, polygons);
 			break;
 		}
@@ -49,7 +49,7 @@ void renderer::renderFigure(Graphics& graphics, group* root) {
 			break;
 		}
 		case 9: {
-			group* groups = dynamic_cast<group*>(fig);
+			SVGGroup* groups = dynamic_cast<SVGGroup*>(fig);
 			if (groups->getFigureArray().empty())
 				return;
 			renderFigure(graphics, groups);
@@ -87,7 +87,7 @@ void renderer::drawRectangle(Graphics& graphics, rectangle* fig) {
 	graphics.Restore(save);
 }
 
-void renderer::drawEllipse(Graphics& graphics, ellipse* fig) {
+void renderer::drawEllipse(Graphics& graphics, Ellipse* fig) {
 	GraphicsState save = graphics.Save();
 	Pen penEllipse(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
 	SolidBrush fillEllipse(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
@@ -113,7 +113,7 @@ void renderer::drawEllipse(Graphics& graphics, ellipse* fig) {
 	graphics.Restore(save);
 }
 
-void renderer::drawLine(Graphics& graphics, line* fig) {
+void renderer::drawLine(Graphics& graphics, Line* fig) {
 	GraphicsState save = graphics.Save();
 	Pen penLine(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
 	vector<pair<string, vector<float>>> transVct = fig->getTransVct();
@@ -137,7 +137,7 @@ void renderer::drawLine(Graphics& graphics, line* fig) {
 	graphics.Restore(save);
 }
 
-void renderer::drawPolygon(Graphics& graphics, polygon* fig) {
+void renderer::drawPolygon(Graphics& graphics, Polygon* fig) {
 	GraphicsState save = graphics.Save();
 	Pen penPolygon(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
 	SolidBrush fillPolygon(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
@@ -169,7 +169,7 @@ void renderer::drawPolygon(Graphics& graphics, polygon* fig) {
 	delete[] p;
 }
 
-void renderer::drawPolyline(Graphics& graphics, polyline* fig) {
+void renderer::drawPolyline(Graphics& graphics, Polyline* fig) {
 	GraphicsState save = graphics.Save();
 	Pen penPolyline(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
 	SolidBrush fillPolyline(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
