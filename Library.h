@@ -1,5 +1,5 @@
-#ifndef _LIB_H_
-#define _LIB_H_
+#ifndef _LIBRARY_H_
+#define _LIBRARY_H_
 
 #include <iostream>
 #include <vector>
@@ -12,7 +12,6 @@
 #include <locale>
 #include <codecvt>
 #include "rapidxml.hpp"
-#include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
 #include <SDKDDKVer.h>
@@ -40,5 +39,13 @@ using namespace Gdiplus;
 #include "Circle.h"
 #include "Ellipse.h"
 #include "Polyline.h"
+#include "Point.h"
+#include "Color.h"
+#include "Polygon.h"
+#include "Rectangle.h"
+#include "Line.h"
+#include "viewBox.h"
+#include "Text.h"
+
 
 #endif 

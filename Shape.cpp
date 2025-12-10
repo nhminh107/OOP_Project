@@ -1,64 +1,64 @@
 #include "Library.h"
-figure::figure() {
+Shape::Shape() {
 	grad = NULL;
 	text_name = "", line_str = "", fig = "";
 }
 
-void figure::updateProperty() {}
+void Shape::updateProperty() {}
 
-string figure::getName() {
+string Shape::getName() {
 	return this->fig;
 }
 
-gradient* figure::getGrad() {
+gradient* Shape::getGrad() {
 	return this->grad;
 }
 
-void figure::setGrad(gradient* grad) {
+void Shape::setGrad(gradient* grad) {
 	if (grad->getGradId() == 1)
 		this->grad = new lineargradient;
 	else if (grad->getGradId() == 2)
 		this->grad = new radialgradient;
 }
 
-void figure::setName(string s) {
+void Shape::setName(string s) {
 	this->fig = s;
 }
 
-void figure::setStroke(stroke stroke) {
+void Shape::setStroke(stroke stroke) {
 	this->strk = stroke;
 }
 
-void figure::setColor(color fill) {
+void Shape::setColor(color fill) {
 	this->fill = fill;
 }
 
-figure:: ~figure() {
+Shape:: ~Shape() {
 	delete grad;
 	grad = NULL;
 }
 
-void figure::setTextName(string textName) {
+void Shape::setTextName(string textName) {
 	this->text_name = textName;
 }
 
-void figure::setLine(string line) {
-	this->line_str = line;
+void Shape::setLine(string Line) {
+	this->line_str = Line;
 }
 
-string figure::getTextName() {
+string Shape::getTextName() {
 	return this->text_name;
 }
 
-stroke figure::getStroke() {
+stroke Shape::getStroke() {
 	return this->strk;
 }
 
-color figure::getColor() {
+color Shape::getColor() {
 	return this->fill;
 }
 
-void figure::updateTransformVct(string str) {
+void Shape::updateTransformVct(string str) {
 	string token = "";
 	stringstream ss(str);
 
@@ -132,11 +132,11 @@ void figure::updateTransformVct(string str) {
 		transVct.push_back(p);
 	}
 }
-vector<pair<string, vector<float>>> figure::getTransVct() {
+vector<pair<string, vector<float>>> Shape::getTransVct() {
 	return this->transVct;
 }
 
-void figure::convertGradient(gradient* grad) {
+void Shape::convertGradient(gradient* grad) {
 	if (grad->getGradId() == 1) {
 		this->grad = new lineargradient;
 	}

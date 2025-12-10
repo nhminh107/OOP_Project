@@ -7,11 +7,11 @@ private:
 
 	void processColor(string, string, color&);
 	void loadColorMap();
-	void processProperty(string, string, string, figure*&);
+	void processProperty(string, string, string, Shape*&);
 
 public:
 	~parser();
-	void parseItem(group*, string, viewbox&);
+	void parseItem(SVGGroup*, string, viewbox&);
 };
 
 #endif

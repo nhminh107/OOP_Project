@@ -1,18 +1,18 @@
 #include "Library.h"
 
-ellipse::ellipse() : Shape() {
+Ellipse::Ellipse() : Shape() {
 	rx = ry = 0;
 	center.setX(0);
 	center.setY(0);
 }
 
-ellipse::~ellipse() {
+Ellipse::~Ellipse() {
 	rx = ry = 0;
 	center.setX(0);
 	center.setY(0);
 }
 
-void ellipse::updateProperty() {
+void Ellipse::updateProperty() {
 	stringstream ss(line_str);
 	string property, val, temp;
 
@@ -31,27 +31,27 @@ void ellipse::updateProperty() {
 	}
 }
 
-point ellipse::getCenter() {
+point Ellipse::getCenter() {
 	return this->center;
 }
 
-float ellipse::getRx() {
+float Ellipse::getRx() {
 	return this->rx;
 }
 
-float ellipse::getRy() {
+float Ellipse::getRy() {
 	return this->ry;
 }
 
-void ellipse::setCenter(float x, float y) {
+void Ellipse::setCenter(float x, float y) {
 	this->center.setX(x);
 	this->center.setY(y);
 }
 
-void ellipse::setRx(float rx) {
+void Ellipse::setRx(float rx) {
 	this->rx = rx;
 }
 
-void ellipse::setRy(float ry) {
+void Ellipse::setRy(float ry) {
 	this->ry = ry;
 }

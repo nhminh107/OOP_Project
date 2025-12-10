@@ -1,14 +1,14 @@
 #ifndef _CIRCLE_H_
 #define _CIRCLE_H_
 
-class circle : public Shape {
+class Circle : public Shape {
 private:
 	float rx, ry;
 	point center;
 
 public:
-	circle();
-	~circle();
+	Circle();
+	~Circle();
 
 	point getCenter();
 	float getRx();

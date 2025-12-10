@@ -1,10 +1,10 @@
 #include "Library.h"
 
-group::group() :figure() {
+SVGGroup::SVGGroup() :Shape() {
 	figureArray = {};
 }
 
-group& group:: operator = (const group& grp) {
+SVGGroup& SVGGroup:: operator = (const SVGGroup& grp) {
 	if (this != &grp) {
 		this->figureArray = grp.figureArray;
 		this->parent = grp.parent;
@@ -12,26 +12,26 @@ group& group:: operator = (const group& grp) {
 	return *this;
 }
 
-group::group(const group& grp) {
+SVGGroup::SVGGroup(const SVGGroup& grp) {
 	this->figureArray = grp.figureArray;
 }
 
-void group::addFigure(figure* fig) {
+void SVGGroup::addFigure(Shape* fig) {
 	this->figureArray.push_back(fig);
 }
 
-void group::setParent(group* parent) {
+void SVGGroup::setParent(SVGGroup* parent) {
 	this->parent = parent;
 }
 
-void group::setFigureArray(vector<figure*> figureArrray) {
+void SVGGroup::setFigureArray(vector<Shape*> figureArrray) {
 	this->figureArray = figureArray;
 }
 
-group* group::getParent() {
+SVGGroup* SVGGroup::getParent() {
 	return this->parent;
 }
 
-vector<figure*> group::getFigureArray() {
+vector<Shape*> SVGGroup::getFigureArray() {
 	return this->figureArray;
 }

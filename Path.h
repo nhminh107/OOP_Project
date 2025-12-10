@@ -1,7 +1,7 @@
 #ifndef _PATH_H_
 #define _PATH_H_
 
-class path : public figure {
+class path : public Shape {
 private:
 	vector<pair<char, vector<float>>> vct;
 	string strokeLineJoin, strokeLineCap, fillRule;

@@ -128,32 +128,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Polyline.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="SVG_Reader.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="viewBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Group.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Ellipse.h" />
     <ClInclude Include="Library.h" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="Polygon.h" />
     <ClInclude Include="Polyline.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="ShapeFactory.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="viewBox.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Color.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

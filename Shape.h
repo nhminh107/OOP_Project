@@ -1,7 +1,7 @@
 #ifndef _FIGURE_H_
 #define _FIGURE_H_
 
-class figure {
+class Shape {
 protected:
     string fig, text_name, line_str;
     vector<pair<string, vector<float>>> transVct;
@@ -11,8 +11,8 @@ protected:
     gradient* grad;
 
 public:
-    figure();
-    virtual ~figure();
+    Shape();
+    virtual ~Shape();
     virtual void updateProperty();
 
     string getName();

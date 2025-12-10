@@ -1,6 +1,6 @@
 #include "Library.h"
 
-path::path() : figure() {
+path::path() : Shape() {
 	strokeLineJoin = "miter";
 	strokeLineCap = "butt";
 	fillRule = "nonzero";
