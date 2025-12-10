@@ -1,5 +1,5 @@
-#ifndef _LIB_H_
-#define _LIB_H_
+#ifndef _LIBRARY_H_
+#define _LIBRARY_H_
 
 #include <iostream>
 #include <vector>
