@@ -1,7 +1,4 @@
 #include "Library.h"
-#define Pi 3.14159265358979323846
-#define Kappa 0.551915024494
-#define Pakka 1.5707963267948966
 using namespace std;
 
 void renderer::renderFigure(Graphics& graphics, group* root) {

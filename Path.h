@@ -19,7 +19,7 @@ public:
 	void setStrokeLineCap(string);
 	void setFillRule(string);
 	void setVct(vector<pair<char, vector<float>>>);
-
+	void draw(Graphics& graphics) override; 
 	void updateProperty();
 };
 
