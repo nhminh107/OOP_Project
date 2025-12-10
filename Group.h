@@ -13,7 +13,7 @@ public:
 	void setFigureArray(vector<Shape*>);
 	group* getParent();
 	vector<Shape*> getFigureArray();
-
+	void draw(Graphics& graphics) override;
 	void addFigure(Shape*);
 };
 
