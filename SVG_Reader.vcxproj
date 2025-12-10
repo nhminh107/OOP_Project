@@ -145,14 +145,11 @@
   <ItemGroup>
     <ClInclude Include="Group.h" />
     <ClInclude Include="Image.h" />
-    <ClInclude Include="Library.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Ellipse.h" />
-    <ClInclude Include="Image.h" />
     <ClInclude Include="Library.h" />
-    <ClInclude Include="Parser.h" />
     <ClInclude Include="Polyline.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Shape.h" />
