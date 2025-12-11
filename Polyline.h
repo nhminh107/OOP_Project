@@ -9,6 +9,7 @@ public:
 	polyline();
 	~polyline();
 
+	void draw(Graphics&) override;
 	void updateProperty();
 
 	vector<point> getVers();

@@ -9,6 +9,7 @@ public:
 	line();
 	~line();
 
+	void draw(Graphics&) override;
 	void updateProperty();
 
 	point getP1();

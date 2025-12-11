@@ -8,7 +8,6 @@ protected:
 
     stroke strk;
     color fill;
-    gradient* grad;
 
 public:
     Shape();
@@ -20,16 +19,12 @@ public:
     stroke getStroke();
     color getColor();
     vector<pair<string, vector<float>>> getTransVct();
-    gradient* getGrad();
-
-    void setGrad(gradient*);
     void setName(string);
     void setTextName(string);
     void setLine(string);
     void setStroke(stroke);
     void setColor(color);
     void updateTransformVct(string);
-    void convertGradient(gradient*);
 
     virtual void draw(Graphics& graphics) = 0;
 };

@@ -1,6 +1,5 @@
 #include "Library.h"
 Shape::Shape() {
-	grad = NULL;
 	text_name = "", line_str = "", fig = "";
 }
 
@@ -10,16 +9,6 @@ string Shape::getName() {
 	return this->fig;
 }
 
-gradient* Shape::getGrad() {
-	return this->grad;
-}
-
-void Shape::setGrad(gradient* grad) {
-	if (grad->getGradId() == 1)
-		this->grad = new lineargradient;
-	else if (grad->getGradId() == 2)
-		this->grad = new radialgradient;
-}
 
 void Shape::setName(string s) {
 	this->fig = s;
@@ -34,8 +23,6 @@ void Shape::setColor(color fill) {
 }
 
 Shape:: ~Shape() {
-	delete grad;
-	grad = NULL;
 }
 
 void Shape::setTextName(string textName) {
@@ -134,15 +121,4 @@ void Shape::updateTransformVct(string str) {
 }
 vector<pair<string, vector<float>>> Shape::getTransVct() {
 	return this->transVct;
-}
-
-void Shape::convertGradient(gradient* grad) {
-	if (grad->getGradId() == 1) {
-		this->grad = new lineargradient;
-	}
-	else if (grad->getGradId() == 2) {
-		this->grad = new radialgradient;
-	}
-	else this->grad = NULL;
-	this->grad = grad;
 }

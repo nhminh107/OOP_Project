@@ -1,4 +1,4 @@
-#ifndef _LIBRARY_H_
+﻿#ifndef _LIBRARY_H_
 #define _LIBRARY_H_
 
 #include <iostream>
@@ -29,23 +29,27 @@ using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
 
-#include "Image.h"
-#include "Parser.h"
-#include "Render.h"
+#include "Color.h"      // Màu sắc
+#include "Point.h"      // Tọa độ điểm
+#include "viewBox.h"    // Khung nhìn
+
 #include "Shape.h"
-#include "ShapeFactory.h"
-#include "Path.h"
-#include "Group.h"
+
+
+#include "Rectangle.h"
+#include "Line.h"
 #include "Circle.h"
 #include "Ellipse.h"
 #include "Polyline.h"
-#include "Point.h"
-#include "Color.h"
-#include "Polygon.h"
-#include "Rectangle.h"
+#include "Polygon.h" 
+#include "Path.h"
 #include "Text.h"
-#include "Line.h"
-#include "Viewbox.h"
+#include "Group.h" 
+
+#include "ShapeFactory.h"
+#include "Render.h" 
+#include "Parser.h"
+#include "Image.h"
 
 #define Pi 3.14159265358979323846
 #define Kappa 0.551915024494

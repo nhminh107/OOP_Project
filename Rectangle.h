@@ -19,6 +19,7 @@ public:
 	void setHeight(float);
 
 	void updateProperty();
+	void draw(Graphics&) override;
 };
 
 #endif
