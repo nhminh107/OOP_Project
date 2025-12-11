@@ -1,13 +1,13 @@
 #ifndef _POLYLINE_H_
 #define _POLYLINE_H_
 
-class polyline : public Shape {
+class Polyline : public Shape {
 private:
 	vector<point> Vers;
 
 public:
-	polyline();
-	~polyline();
+	Polyline();
+	~Polyline();
 
 	void updateProperty();
 

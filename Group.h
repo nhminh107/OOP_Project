@@ -5,9 +5,9 @@ class group :public Shape {
 	vector<Shape*> figureArray;
 	group* parent;
 public:
-	group();
-	group(const group&);
-	group& operator = (const group&);
+	SVGGroup();
+	SVGGroup(const SVGGroup&);
+	SVGGroup& operator = (const SVGGroup&);
 
 	void setParent(group*);
 	void setFigureArray(vector<Shape*>);

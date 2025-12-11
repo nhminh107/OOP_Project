@@ -1,14 +1,14 @@
 #ifndef _ELLIPSE_H_
 #define _ELLIPSE_H_
 
-class ellipse : public Shape {
+class Ellipse : public Shape {
 private:
 	float rx, ry;
 	point center;
 
 public:
-	ellipse();
-	~ellipse();
+	Ellipse();
+	~Ellipse();
 
 	point getCenter();
 	float getRx();
@@ -19,6 +19,7 @@ public:
 	void setRy(float);
 
 	void updateProperty();
+	void drawEllipse(Graphics&, ellipse*);
 };
 
 #endif 

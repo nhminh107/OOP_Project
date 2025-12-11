@@ -7,23 +7,23 @@ Shape* factoryfigure::getFigure(string name) {
 		break;
 	}
 	case 2: {
-		return new circle();
+		return new Circle();
 		break;
 	}
 	case 3: {
-		return new ellipse();
+		return new Ellipse();
 		break;
 	}
 	case 4: {
-		return new line();
+		return new Line();
 		break;
 	}
 	case 5: {
-		return new polyline();
+		return new Polyline();
 		break;
 	}
 	case 6: {
-		return new polygon();
+		return new Polygon();
 		break;
 	}
 	case 7: {
@@ -35,7 +35,7 @@ Shape* factoryfigure::getFigure(string name) {
 		break;
 	}
 	case 9: {
-		return new group();
+		return new SVGGroup();
 		break;
 	}
 	default: return NULL;
@@ -45,11 +45,11 @@ Shape* factoryfigure::getFigure(string name) {
 
 factoryfigure::factoryfigure() {
 	figureId["rect"] = 1;
-	figureId["circle"] = 2;
-	figureId["ellipse"] = 3;
-	figureId["line"] = 4;
-	figureId["polyline"] = 5;
-	figureId["polygon"] = 6;
+	figureId["Circle"] = 2;
+	figureId["Ellipse"] = 3;
+	figureId["Line"] = 4;
+	figureId["Polyline"] = 5;
+	figureId["Polygon"] = 6;
 	figureId["text"] = 7;
 	figureId["path"] = 8;
 	figureId["g"] = 9;
