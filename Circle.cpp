@@ -1,16 +1,16 @@
 #include "Library.h"
 
-circle::circle() : Shape() {
+Circle::Circle() : Shape() {
 	this->setCenter(0, 0);
     this->setRadius(0);
 }
 
-circle::~circle() {
+Circle::~Circle() {
 	this->setCenter(0, 0);
     this->setRadius(0);
 }
 
-void circle::updateProperty() {
+void Circle::updateProperty() {
 	stringstream ss(line_str);
 	string attribute, val, temp;
 
@@ -27,7 +27,7 @@ void circle::updateProperty() {
 			this->center.setY((stof(val)));
 	}
 }
-point circle::getCenter() {
+point Circle::getCenter() {
 	return this->center;
 }
 
@@ -35,7 +35,7 @@ float circle::getRadius() {
 	return this->radius;
 }
 
-void circle::setCenter(float x, float y) {
+void Circle::setCenter(float x, float y) {
 	this->center.setX(x);
 	this->center.setY(y);
 }

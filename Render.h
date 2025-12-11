@@ -3,13 +3,13 @@
 
 class renderer {
 public:
-	void renderFigure(Graphics&, group*);
+	void renderFigure(Graphics&, SVGGroup*);
 
 	void drawRectangle(Graphics&, rectangle*);
-	void drawEllipse(Graphics&, ellipse*);
-	void drawLine(Graphics&, line*);
-	void drawPolygon(Graphics&, polygon*);
-	void drawPolyline(Graphics&, polyline*);
+	void drawEllipse(Graphics&, Ellipse*);
+	void drawLine(Graphics&, Line*);
+	void drawPolygon(Graphics&, Polygon*);
+	void drawPolyline(Graphics&, Polyline*);
 	void drawText(Graphics&, text*);
 	void drawPath(Graphics&, path*);
 };

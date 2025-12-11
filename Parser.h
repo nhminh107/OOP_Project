@@ -11,7 +11,7 @@ private:
 
 public:
 	~parser();
-	void parseItem(group*, string, viewbox&);
+	void parseItem(SVGGroup*, string, viewbox&);
 };
 
 #endif

@@ -4,11 +4,11 @@ polygon::polygon() : Shape() {
 	Vers = {};
 }
 
-polygon::~polygon() {
+Polygon::~Polygon() {
 	Vers = {};
 }
 
-void polygon::updateProperty() {
+void Polygon::updateProperty() {
 
 	stringstream ss(line_str);
 	string property, val, temp;
@@ -34,10 +34,10 @@ void polygon::updateProperty() {
 
 }
 
-vector<point> polygon::getVers() {
+vector<point> Polygon::getVers() {
 	return this->Vers;
 }
 
-void polygon::setVers(vector<point> Vers) {
+void Polygon::setVers(vector<point> Vers) {
 	this->Vers = Vers;
 }

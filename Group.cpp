@@ -4,7 +4,7 @@ group::group() :Shape() {
 	figureArray = {};
 }
 
-group& group:: operator = (const group& grp) {
+SVGGroup& SVGGroup:: operator = (const SVGGroup& grp) {
 	if (this != &grp) {
 		this->figureArray = grp.figureArray;
 		this->parent = grp.parent;
@@ -64,7 +64,7 @@ void group::addFigure(Shape* fig) {
 	this->figureArray.push_back(fig);
 }
 
-void group::setParent(group* parent) {
+void SVGGroup::setParent(SVGGroup* parent) {
 	this->parent = parent;
 }
 
@@ -72,7 +72,7 @@ void group::setFigureArray(vector<Shape*> figureArrray) {
 	this->figureArray = figureArray;
 }
 
-group* group::getParent() {
+SVGGroup* SVGGroup::getParent() {
 	return this->parent;
 }
 
