@@ -3,7 +3,7 @@
 
 class Circle : public Shape {
 private:
-	float rx, ry;
+	float radius;
 	point center;
 
 public:
@@ -11,14 +11,13 @@ public:
 	~Circle();
 
 	point getCenter();
-	float getRx();
-	float getRy();
+	float getRadius();
 
 	void setCenter(float, float);
-	void setRx(float);
-	void setRy(float);
+	void setRadius(float);
 
 	void updateProperty();
+	void drawCircle(Graphics&, circle*);
 };
 
 #endif
