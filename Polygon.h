@@ -6,8 +6,8 @@ private:
 	vector<point> Vers;
 
 public:
-	polygon();
-	~polygon();
+	Polygon();
+	~Polygon();
 
 	void setVers(vector<point>);
 	vector<point> getVers();

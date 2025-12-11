@@ -1,15 +1,15 @@
 #include "Library.h"
 
-polyline::polyline() : Shape() {
+Polyline::Polyline() : Shape() {
 	fill.r = fill.g = fill.b = 0;
 	fill.opacity = 1;
 }
 
-polyline::~polyline() {
+Polyline::~Polyline() {
 	Vers = {};
 }
 
-void polyline::updateProperty() {
+void Polyline::updateProperty() {
 	stringstream ss(line_str);
 	string property, val, temp;
 
@@ -34,10 +34,10 @@ void polyline::updateProperty() {
 	}
 }
 
-vector<point> polyline::getVers() {
+vector<point> Polyline::getVers() {
 	return this->Vers;
 }
 
-void polyline::setVers(vector<point> Vers) {
+void Polyline::setVers(vector<point> Vers) {
 	this->Vers = Vers;
 }

@@ -1,7 +1,7 @@
 #include "Library.h"
 
 void image::parseImage(parser parse, viewbox& vb) {
-	root = new group();
+	root = new SVGGroup();
 	parse.parseItem(root, fileName, vb);
 }
 
