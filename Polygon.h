@@ -13,6 +13,7 @@ public:
 	vector<point> getVers();
 
 	void updateProperty();
+	void drawPolygon(Graphics&, polygon*);
 };
 
 #endif

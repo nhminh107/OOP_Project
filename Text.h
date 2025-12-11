@@ -30,6 +30,8 @@ public:
 	void setFontStyle(string);
 	void setDx(float);
 	void setDy(float);
+
+	void drawText(Graphics&, text*);
 };
 
 #endif

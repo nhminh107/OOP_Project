@@ -134,37 +134,7 @@ void renderer::drawLine(Graphics& graphics, line* fig) {
 	graphics.Restore(save);
 }
 
-void renderer::drawPolygon(Graphics& graphics, polygon* fig) {
-	GraphicsState save = graphics.Save();
-	Pen penPolygon(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
-	SolidBrush fillPolygon(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
-	vector<pair<string, vector<float>>> transVct = fig->getTransVct();
 
-	for (auto trans : transVct) {
-		float x = 0.0f;
-		if (!trans.second.empty())
-			x = trans.second[0];
-		float y = x;
-		if (trans.second.size() == 2)
-			y = trans.second[1];
-		if (trans.first == "translate")
-			graphics.TranslateTransform(x, y);
-		else if (trans.first == "rotate")
-			graphics.RotateTransform(x);
-		else graphics.ScaleTransform(x, y);
-	}
-
-	int numPoint = fig->getVers().size();
-	PointF* p = new PointF[numPoint];
-	for (int i = 0; i < numPoint; i++)
-		p[i] = PointF(fig->getVers()[i].getX(), fig->getVers()[i].getY());
-
-	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
-	graphics.FillPolygon(&fillPolygon, p, numPoint, FillModeWinding);
-	graphics.DrawPolygon(&penPolygon, p, numPoint);
-	graphics.Restore(save);
-	delete[] p;
-}
 
 void renderer::drawPolyline(Graphics& graphics, polyline* fig) {
 	GraphicsState save = graphics.Save();
@@ -196,62 +166,6 @@ void renderer::drawPolyline(Graphics& graphics, polyline* fig) {
 	graphics.DrawLines(&penPolyline, p, numPoint);
 	graphics.Restore(save);
 	delete[] p;
-}
-
-void renderer::drawText(Graphics& graphics, text* fig) {
-	GraphicsState save = graphics.Save();
-	wstring_convert<codecvt_utf8<wchar_t>> converter;
-	wstring wContent = converter.from_bytes(fig->getContent());
-	wstring wFontFamily = converter.from_bytes(fig->getFontFamily());
-	FontFamily WFF = wFontFamily.c_str();
-
-	PointF textPosition;
-	StringFormat stringFormat;
-	if (fig->getTextAnchor() == "middle") {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() - fig->getFontSize() / 25, fig->getTextPos().getY() + fig->getDy() - fig->getFontSize() / 4);
-		stringFormat.SetAlignment(StringAlignmentCenter);
-		stringFormat.SetLineAlignment(StringAlignmentCenter);
-	}
-	else if (fig->getTextAnchor() == "end") {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() + fig->getFontSize() / 6.5, fig->getTextPos().getY() + fig->getDy() + fig->getFontSize() / 2.8);
-		stringFormat.SetAlignment(StringAlignmentFar);
-		stringFormat.SetLineAlignment(StringAlignmentFar);
-	}
-	else {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() - fig->getFontSize() / 7, fig->getTextPos().getY() + fig->getDy() - fig->getFontSize() / 1.2);
-		stringFormat.SetAlignment(StringAlignmentNear);
-		stringFormat.SetLineAlignment(StringAlignmentNear);
-	}
-
-	GraphicsPath path;
-	if (fig->getFontStyle() == "italic")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleItalic, fig->getFontSize() / 1.05, textPosition, &stringFormat);
-	else if (fig->getFontStyle() == "bold")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleBold, fig->getFontSize() / 1.05, textPosition, &stringFormat);
-	else path.AddString(wContent.c_str(), -1, &WFF, FontStyleRegular, fig->getFontSize() / 1.05, textPosition, &stringFormat);
-
-	Pen penText(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
-	SolidBrush fillText(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
-	vector<pair<string, vector<float>>> transVct = fig->getTransVct();
-
-	for (auto trans : transVct) {
-		float x = 0.0f;
-		if (!trans.second.empty())
-			x = trans.second[0];
-		float y = x;
-		if (trans.second.size() == 2)
-			y = trans.second[1];
-		if (trans.first == "translate")
-			graphics.TranslateTransform(x, y);
-		else if (trans.first == "rotate")
-			graphics.RotateTransform(x);
-		else graphics.ScaleTransform(x, y);
-	}
-
-	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
-	graphics.FillPath(&fillText, &path);
-	graphics.DrawPath(&penText, &path);
-	graphics.Restore(save);
 }
 
 void renderer::drawPath(Graphics& graphics, path* fig) {
