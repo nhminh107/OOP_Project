@@ -32,12 +32,12 @@ void renderer::renderFigure(Graphics& graphics, group* root) {
 		}
 		case 6: {
 			polygon* polygons = dynamic_cast<polygon*>(fig);
-			drawPolygon(graphics, polygons);
+			polygons->draw(graphics); //sua lai cho dung		
 			break;
 		}
 		case 7: {
 			text* texts = dynamic_cast<text*> (fig);
-			drawText(graphics, texts);
+			texts->draw(graphics); //sua lai cho dung
 			break;
 		}
 		case 8: {
