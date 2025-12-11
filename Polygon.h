@@ -13,7 +13,7 @@ public:
 	vector<point> getVers();
 
 	void updateProperty();
-	void drawPolygon(Graphics&, polygon*);
+	void draw(Graphics&) override;
 };
 
 #endif

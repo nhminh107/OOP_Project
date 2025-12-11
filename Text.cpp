@@ -50,41 +50,41 @@ void text::updateProperty() {
 	this->content = text_name;
 }
 
-void text::drawText(Graphics& graphics, text* fig) {
+void text::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
 	wstring_convert<codecvt_utf8<wchar_t>> converter;
-	wstring wContent = converter.from_bytes(fig->getContent());
-	wstring wFontFamily = converter.from_bytes(fig->getFontFamily());
+	wstring wContent = converter.from_bytes(this->getContent());
+	wstring wFontFamily = converter.from_bytes(this->getFontFamily());
 	FontFamily WFF = wFontFamily.c_str();
 
 	PointF textPosition;
 	StringFormat stringFormat;
-	if (fig->getTextAnchor() == "middle") {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() - fig->getFontSize() / 25, fig->getTextPos().getY() + fig->getDy() - fig->getFontSize() / 4);
+	if (this->getTextAnchor() == "middle") {
+		textPosition = PointF(this->getTextPos().getX() + this->getDx() - this->getFontSize() / 25, this->getTextPos().getY() + this->getDy() - this->getFontSize() / 4);
 		stringFormat.SetAlignment(StringAlignmentCenter);
 		stringFormat.SetLineAlignment(StringAlignmentCenter);
 	}
-	else if (fig->getTextAnchor() == "end") {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() + fig->getFontSize() / 6.5, fig->getTextPos().getY() + fig->getDy() + fig->getFontSize() / 2.8);
+	else if (this->getTextAnchor() == "end") {
+		textPosition = PointF(this->getTextPos().getX() + this->getDx() + this->getFontSize() / 6.5, this->getTextPos().getY() + this->getDy() + this->getFontSize() / 2.8);
 		stringFormat.SetAlignment(StringAlignmentFar);
 		stringFormat.SetLineAlignment(StringAlignmentFar);
 	}
 	else {
-		textPosition = PointF(fig->getTextPos().getX() + fig->getDx() - fig->getFontSize() / 7, fig->getTextPos().getY() + fig->getDy() - fig->getFontSize() / 1.2);
+		textPosition = PointF(this->getTextPos().getX() + this->getDx() - this->getFontSize() / 7, this->getTextPos().getY() + this->getDy() - this->getFontSize() / 1.2);
 		stringFormat.SetAlignment(StringAlignmentNear);
 		stringFormat.SetLineAlignment(StringAlignmentNear);
 	}
 
 	GraphicsPath path;
-	if (fig->getFontStyle() == "italic")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleItalic, fig->getFontSize() / 1.05, textPosition, &stringFormat);
-	else if (fig->getFontStyle() == "bold")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleBold, fig->getFontSize() / 1.05, textPosition, &stringFormat);
-	else path.AddString(wContent.c_str(), -1, &WFF, FontStyleRegular, fig->getFontSize() / 1.05, textPosition, &stringFormat);
+	if (this->getFontStyle() == "italic")
+		path.AddString(wContent.c_str(), -1, &WFF, FontStyleItalic, this->getFontSize() / 1.05, textPosition, &stringFormat);
+	else if (this->getFontStyle() == "bold")
+		path.AddString(wContent.c_str(), -1, &WFF, FontStyleBold, this->getFontSize() / 1.05, textPosition, &stringFormat);
+	else path.AddString(wContent.c_str(), -1, &WFF, FontStyleRegular, this->getFontSize() / 1.05, textPosition, &stringFormat);
 
-	Pen penText(Color(fig->getStroke().getStrokeColor().opacity * 255, fig->getStroke().getStrokeColor().r, fig->getStroke().getStrokeColor().g, fig->getStroke().getStrokeColor().b), fig->getStroke().getStrokeWidth());
-	SolidBrush fillText(Color(fig->getColor().opacity * 255, fig->getColor().r, fig->getColor().g, fig->getColor().b));
-	vector<pair<string, vector<float>>> transVct = fig->getTransVct();
+	Pen penText(Color(this->getStroke().getStrokeColor().opacity * 255, this->getStroke().getStrokeColor().r, this->getStroke().getStrokeColor().g, this->getStroke().getStrokeColor().b), this->getStroke().getStrokeWidth());
+	SolidBrush fillText(Color(this->getColor().opacity * 255, this->getColor().r, this->getColor().g, this->getColor().b));
+	vector<pair<string, vector<float>>> transVct = this->getTransVct();
 
 	for (auto trans : transVct) {
 		float x = 0.0f;

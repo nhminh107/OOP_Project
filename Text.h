@@ -31,7 +31,7 @@ public:
 	void setDx(float);
 	void setDy(float);
 
-	void drawText(Graphics&, text*);
+	void draw(Graphics&) override;
 };
 
 #endif
