@@ -19,6 +19,7 @@ public:
 	void setRy(float);
 
 	void updateProperty();
+	void draw(Graphics&) override;
 };
 
 #endif 

@@ -13,6 +13,7 @@ public:
 	vector<point> getVers();
 
 	void updateProperty();
+	void draw(Graphics&) override;
 };
 
 #endif
