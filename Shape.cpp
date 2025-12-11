@@ -42,8 +42,8 @@ void Shape::setTextName(string textName) {
 	this->text_name = textName;
 }
 
-void Shape::setLine(string Line) {
-	this->line_str = Line;
+void Shape::setLine(string line) {
+	this->line_str = line;
 }
 
 string Shape::getTextName() {

@@ -147,7 +147,7 @@
     <ClCompile Include="ShapeFactory.cpp" />
     <ClCompile Include="SVG_Reader.cpp" />
     <ClCompile Include="Text.cpp" />
-    <ClCompile Include="viewBox.cpp" />
+    <ClCompile Include="Viewbox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
@@ -167,7 +167,7 @@
     <ClInclude Include="Shape.h" />
     <ClInclude Include="ShapeFactory.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="viewBox.h" />
+    <ClInclude Include="Viewbox.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Color.txt" />

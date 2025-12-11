@@ -1,6 +1,6 @@
 #include "Library.h"
 
-SVGGroup::SVGGroup() :Shape() {
+group::group() :Shape() {
 	figureArray = {};
 }
 
@@ -12,11 +12,55 @@ SVGGroup& SVGGroup:: operator = (const SVGGroup& grp) {
 	return *this;
 }
 
-SVGGroup::SVGGroup(const SVGGroup& grp) {
+void group::draw(Graphics& graphics) {
+
+    if (this->figureArray.empty())
+        return;
+
+    GraphicsState save = graphics.Save();
+
+    vector<pair<string, vector<float>>> transforms = this->getTransVct();
+
+    for (const auto& trans : transforms) {
+        float x = 0.0f;
+        if (!trans.second.empty())
+            x = trans.second[0];
+
+        float y = x;
+        if (trans.second.size() == 2)
+            y = trans.second[1];
+
+        if (trans.first == "translate")
+            graphics.TranslateTransform(x, y);
+        else if (trans.first == "rotate")
+            graphics.RotateTransform(x);
+        else if (trans.first == "scale")
+            graphics.ScaleTransform(x, y);
+        else if (trans.first == "matrix") {
+            if (trans.second.size() >= 6) {
+                Matrix matrix(
+                    trans.second[0], trans.second[1], trans.second[2],
+                    trans.second[3], trans.second[4], trans.second[5]
+                );
+                graphics.MultiplyTransform(&matrix);
+            }
+        }
+    }
+
+    for (Shape* fig : this->figureArray) {
+        if (fig != nullptr) {
+            fig->draw(graphics);
+        }
+    }
+
+
+    graphics.Restore(save);
+}
+group::group(const group& grp) {
 	this->figureArray = grp.figureArray;
 }
 
-void SVGGroup::addFigure(Shape* fig) {
+void group::addFigure(Shape* fig) {
 	this->figureArray.push_back(fig);
 }
 
@@ -24,7 +68,7 @@ void SVGGroup::setParent(SVGGroup* parent) {
 	this->parent = parent;
 }
 
-void SVGGroup::setFigureArray(vector<Shape*> figureArrray) {
+void group::setFigureArray(vector<Shape*> figureArrray) {
 	this->figureArray = figureArray;
 }
 
@@ -32,6 +76,6 @@ SVGGroup* SVGGroup::getParent() {
 	return this->parent;
 }
 
-vector<Shape*> SVGGroup::getFigureArray() {
+vector<Shape*> group::getFigureArray() {
 	return this->figureArray;
 }

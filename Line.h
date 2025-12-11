@@ -1,13 +1,13 @@
 #ifndef _LINE_H_
 #define _LINE_H_
 
-class Line :public Shape {
+class line :public Shape {
 private:
 	point p1, p2;
 
 public:
-	Line();
-	~Line();
+	line();
+	~line();
 
 	void updateProperty();
 

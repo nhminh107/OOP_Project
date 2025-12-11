@@ -28,9 +28,10 @@ public:
     void setLine(string);
     void setStroke(stroke);
     void setColor(color);
-
     void updateTransformVct(string);
     void convertGradient(gradient*);
+
+    virtual void draw(Graphics& graphics) = 0;
 };
 
 #endif

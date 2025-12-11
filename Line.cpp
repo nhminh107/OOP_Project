@@ -1,16 +1,16 @@
 #include "Library.h"
 
-Line::Line() :Shape() {
+line::line() :Shape() {
 	p1.setX(0); p1.setY(0);
 	p2.setX(0); p2.setY(0);
 }
 
-Line::~Line() {
+line::~line() {
 	p1.setX(0); p1.setY(0);
 	p2.setX(0); p2.setY(0);
 }
 
-void Line::updateProperty() {
+void line::updateProperty() {
 	stringstream ss(line_str);
 	string attribute, val, temp;
 
@@ -33,18 +33,18 @@ void Line::updateProperty() {
 	}
 }
 
-point Line::getP1() {
+point line::getP1() {
 	return this->p1;
 }
 
-point Line::getP2() {
+point line::getP2() {
 	return this->p2;
 }
 
-void Line::setP1(point p1) {
+void line::setP1(point p1) {
 	this->p1 = p1;
 }
 
-void Line::setP2(point p2) {
+void line::setP2(point p2) {
 	this->p2 = p2;
 }
