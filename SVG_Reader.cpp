@@ -49,10 +49,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     wcex.lpszMenuName = nullptr;
 
     // Load icon small.ico trực tiếp
-    HANDLE hIcon = LoadImage(NULL, L"small.ico", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
+    HANDLE hIcon = LoadImage(NULL, L"favicon.png", IMAGE_ICON, 32, 32, LR_LOADFROMFILE);
     wcex.hIcon = hIcon ? (HICON)hIcon : LoadIcon(NULL, IDI_APPLICATION);
 
-    HANDLE hIconSm = LoadImage(NULL, L"small.ico", IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+    HANDLE hIconSm = LoadImage(NULL, L"favicon.png", IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
     wcex.hIconSm = hIconSm ? (HICON)hIconSm : LoadIcon(NULL, IDI_APPLICATION);
 
     if (!RegisterClassExW(&wcex)) return FALSE;
