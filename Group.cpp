@@ -11,7 +11,12 @@ group& group:: operator = (const group& grp) {
 	}
 	return *this;
 }
-
+group::~group() {
+    for (auto it = this->figureArray.begin(); it != this->figureArray.end(); it++) {
+        figureArray.erase(it); 
+    }
+    delete this->parent; 
+}
 void group::draw(Graphics& graphics) {
 
     if (this->figureArray.empty())

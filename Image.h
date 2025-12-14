@@ -10,6 +10,7 @@ public:
 	image(string);
 	void parseImage(parser, viewbox&);
 	void renderImage(renderer, Graphics&);
+	group* getRoot() { return this->root; }
 	~image();
 };
 

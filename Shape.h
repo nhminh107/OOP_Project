@@ -5,7 +5,7 @@ class Shape {
 protected:
     string fig, text_name, line_str;
     vector<pair<string, vector<float>>> transVct;
-
+    bool isSelected;
     stroke strk;
     color fill;
 
@@ -23,9 +23,10 @@ public:
     void setTextName(string);
     void setLine(string);
     void setStroke(stroke);
+    void setSelected(bool s) { isSelected = s;  }
     void setColor(color);
     void updateTransformVct(string);
-
+    void getTransformMatrix(Gdiplus::Matrix* matrix);
     virtual void draw(Graphics& graphics) = 0;
 };
 

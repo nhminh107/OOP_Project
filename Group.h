@@ -6,6 +6,7 @@ class group :public Shape {
 	group* parent;
 public:
 	group();
+	~group(); 
 	group(const group&);
 	group& operator = (const group&);
 
