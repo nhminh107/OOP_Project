@@ -1,6 +1,7 @@
 #include "Library.h"
 Shape::Shape() {
 	text_name = "", line_str = "", fig = "";
+	isSelected = false;
 }
 
 void Shape::updateProperty() {}
@@ -121,4 +122,35 @@ void Shape::updateTransformVct(string str) {
 }
 vector<pair<string, vector<float>>> Shape::getTransVct() {
 	return this->transVct;
+}
+
+void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {
+	matrix->Reset();
+
+	for (auto trans : this->transVct) {
+		string type = trans.first;
+		vector<float>& args = trans.second;
+
+		if (type == "translate") {
+			float x = args.size() > 0 ? args[0] : 0;
+			float y = args.size() > 1 ? args[1] : 0;
+			matrix->Translate(x, y);
+		}
+		else if (type == "rotate") {
+			if (args.size() > 0) {
+				matrix->Rotate(args[0]);
+			}
+		}
+		else if (type == "scale") {
+			float x = args.size() > 0 ? args[0] : 1;
+			float y = args.size() > 1 ? args[1] : x;
+			matrix->Scale(x, y);
+		}
+		else if (type == "matrix") {
+			if (args.size() >= 6) {
+				Gdiplus::Matrix m(args[0], args[1], args[2], args[3], args[4], args[5]);
+				matrix->Multiply(&m);
+			}
+		}
+	}
 }

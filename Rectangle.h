@@ -17,7 +17,6 @@ public:
 	void setRoot(point);
 	void setWidth(float);
 	void setHeight(float);
-
 	void updateProperty();
 	void draw(Graphics&) override;
 };

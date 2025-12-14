@@ -106,3 +106,4 @@ void rectangle::setWidth(float w) {
 void rectangle::setHeight(float h) {
 	this->height = h;
 }
+
