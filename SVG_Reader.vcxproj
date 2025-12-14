@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="FileExplorer.cpp" />
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Line.cpp" />
@@ -148,9 +149,11 @@
     <ClCompile Include="SVG_Reader.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Viewbox.cpp" />
+    <ClCompile Include="WindowApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
+    <ClInclude Include="FileExplorer.h" />
     <ClInclude Include="Group.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Line.h" />
@@ -168,6 +171,7 @@
     <ClInclude Include="ShapeFactory.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Viewbox.h" />
+    <ClInclude Include="WindowApp.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Color.txt" />
