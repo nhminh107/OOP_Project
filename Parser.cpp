@@ -193,7 +193,7 @@ void parser::processProperty(string name, string property, string textName, Shap
 }
 
 // --- HÀM PARSE ITEM (ĐÃ BỎ ĐỌC DEFS/GRADIENT) ---
-void parser::parseItem(group* root, string fileName, viewbox& vb) {
+void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 	ifstream fin(fileName, ios::in);
 	if (!fin.is_open()) {
 		cout << "Error Opening SVG File\n";
@@ -207,7 +207,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 	stack<string> groupStack;
 	groupStack.push(" ");
 
-	group* curGroup = root;
+	SVGGroup* curGroup = root;
 
 	// Reset ViewBox
 	vb.setPortWidth(0); vb.setPortHeight(0);
@@ -273,7 +273,7 @@ void parser::parseItem(group* root, string fileName, viewbox& vb) {
 			property = " " + groupStack.top() + " " + property + " ";
 			groupStack.push(property);
 
-			group* newGroup = new group();
+			SVGGroup* newGroup = new SVGGroup();
 			newGroup->setName("g");
 			newGroup->setParent(curGroup);
 			curGroup->addFigure(newGroup);

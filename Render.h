@@ -3,7 +3,7 @@
 
 class renderer {
 public:
-	void renderFigure(Graphics&, group*);
+	void renderFigure(Graphics&, SVGGroup*);
 };
 
 #endif

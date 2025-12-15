@@ -1,14 +1,14 @@
 ﻿#include "Library.h"
 
-path::path() : Shape() {
+SVGPath::SVGPath() : Shape() {
 	strokeLineJoin = "miter";
 	strokeLineCap = "butt";
 	fillRule = "nonzero";
 }
 
-path::~path() {}
+SVGPath::~SVGPath() {}
 
-void path::updateProperty() {
+void SVGPath::updateProperty() {
 	ofstream ofs("test.txt", ios::out);
 	stringstream ss(line_str);
 	string property, val, temp;
@@ -386,7 +386,7 @@ void path::updateProperty() {
 	}
 }
 
-void path::draw(Graphics& graphics) {
+void SVGPath::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
 
@@ -566,34 +566,34 @@ void path::draw(Graphics& graphics) {
 	graphics.Restore(save);
 }
 
-string path::getStrokeLineJoin() {
+string SVGPath::getStrokeLineJoin() {
 	return this->strokeLineJoin;
 }
 
-string path::getStrokeLineCap() {
+string SVGPath::getStrokeLineCap() {
 	return this->strokeLineCap;
 }
 
-string path::getFillRule() {
+string SVGPath::getFillRule() {
 	return this->fillRule;
 }
 
-void path::setFillRule(string fillRule) {
+void SVGPath::setFillRule(string fillRule) {
 	this->fillRule = fillRule;
 }
 
-void path::setStrokeLineJoin(string linejoin) {
+void SVGPath::setStrokeLineJoin(string linejoin) {
 	this->strokeLineJoin = linejoin;
 }
 
-void path::setStrokeLineCap(string linecap) {
+void SVGPath::setStrokeLineCap(string linecap) {
 	this->strokeLineCap = linecap;
 }
 
-void path::setVct(vector<pair<char, vector<float>>> vct) {
+void SVGPath::setVct(vector<pair<char, vector<float>>> vct) {
 	this->vct = vct;
 }
 
-vector<pair<char, vector<float>>> path::getProp() {
+vector<pair<char, vector<float>>> SVGPath::getProp() {
 	return this->vct;
 }

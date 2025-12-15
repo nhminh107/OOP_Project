@@ -1,14 +1,14 @@
 #ifndef _CIRCLE_H_
 #define _CIRCLE_H_
 
-class circle : public Shape {
+class SVGCircle : public Shape {
 private:
 	float radius;
 	point center;
 
 public:
-	circle();
-	~circle();
+	SVGCircle();
+	~SVGCircle();
 
 	point getCenter();
 	float getRadius();

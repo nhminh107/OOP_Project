@@ -1,15 +1,15 @@
 #ifndef _TEXT_H_
 #define _TEXT_H_
 
-class text : public Shape {
+class SVGText : public Shape {
 private:
 	float fontSize, dx, dy;
 	point textPos;
 	string content, fontFamily, textAnchor, fontStyle;
 
 public:
-	text();
-	~text();
+	SVGText();
+	~SVGText();
 
 	void updateProperty();
 

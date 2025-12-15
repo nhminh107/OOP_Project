@@ -1,14 +1,14 @@
 #ifndef _RECTANGLE_H_
 #define _RECTANGLE_H_
 
-class rectangle : public Shape {
+class SVGRectangle : public Shape {
 private:
 	point root;
 	float width, height;
 
 public:
-	rectangle();
-	~rectangle();
+	SVGRectangle();
+	~SVGRectangle();
 
 	point getRoot();
 	float getWidth();

@@ -1,15 +1,15 @@
 ﻿#include "Library.h"
 
-polyline::polyline() : Shape() {
+SVGPolyline::SVGPolyline() : Shape() {
 	fill.r = fill.g = fill.b = 0;
 	fill.opacity = 1;
 }
 
-polyline::~polyline() {
+SVGPolyline::~SVGPolyline() {
 	Vers = {};
 }
 
-void polyline::updateProperty() {
+void SVGPolyline::updateProperty() {
 	stringstream ss(line_str);
 	string property, val, temp;
 
@@ -34,7 +34,7 @@ void polyline::updateProperty() {
 	}
 }
 
-void polyline::draw(Graphics& graphics) {
+void SVGPolyline::draw(Graphics& graphics) {
     // 1. Lưu trạng thái
     GraphicsState save = graphics.Save();
 
@@ -95,10 +95,10 @@ void polyline::draw(Graphics& graphics) {
     graphics.Restore(save);
 }
 
-vector<point> polyline::getVers() {
+vector<point> SVGPolyline::getVers() {
 	return this->Vers;
 }
 
-void polyline::setVers(vector<point> Vers) {
+void SVGPolyline::setVers(vector<point> Vers) {
 	this->Vers = Vers;
 }

@@ -1,18 +1,18 @@
 ﻿#include "Library.h"
 
-rectangle::rectangle() : Shape() {
+SVGRectangle::SVGRectangle() : Shape() {
 	width = height = 0;
 	root.setX(0);
 	root.setY(0);
 }
 
-rectangle::~rectangle() {
+SVGRectangle::~SVGRectangle() {
 	width = height = 0;
 	root.setX(0);
 	root.setY(0);
 }
 
-void rectangle::updateProperty() {
+void SVGRectangle::updateProperty() {
 	stringstream ss(line_str);
 	string attribute, val, temp;
 
@@ -30,7 +30,7 @@ void rectangle::updateProperty() {
 			this->height = stof(val);
 	}
 }
-void rectangle::draw(Graphics& graphics) {
+void SVGRectangle::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
 
@@ -83,27 +83,27 @@ void rectangle::draw(Graphics& graphics) {
 	// 7. Khôi phục trạng thái
 	graphics.Restore(save);
 }
-point rectangle::getRoot() {
+point SVGRectangle::getRoot() {
 	return this->root;
 }
 
-float rectangle::getWidth() {
+float SVGRectangle::getWidth() {
 	return this->width;
 }
 
-float rectangle::getHeight() {
+float SVGRectangle::getHeight() {
 	return this->height;
 }
 
-void rectangle::setRoot(point root) {
+void SVGRectangle::setRoot(point root) {
 	this->root = root;
 }
 
-void rectangle::setWidth(float w) {
+void SVGRectangle::setWidth(float w) {
 	this->width = w;
 }
 
-void rectangle::setHeight(float h) {
+void SVGRectangle::setHeight(float h) {
 	this->height = h;
 }
 

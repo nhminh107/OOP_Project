@@ -1,14 +1,14 @@
 #ifndef _PATH_H_
 #define _PATH_H_
 
-class path : public Shape {
+class SVGPath : public Shape {
 private:
 	vector<pair<char, vector<float>>> vct;
 	string strokeLineJoin, strokeLineCap, fillRule;
 
 public:
-	path();
-	~path();
+	SVGPath();
+	~SVGPath();
 
 	vector<pair<char, vector<float>>> getProp();
 	string getStrokeLineJoin();

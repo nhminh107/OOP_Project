@@ -3,39 +3,39 @@ Shape* factoryfigure::getFigure(string name) {
 	int num = figureId[name];
 	switch (num) {
 	case 1: {
-		return new rectangle();
+		return new SVGRectangle();
 		break;
 	}
 	case 2: {
-		return new circle();
+		return new SVGCircle();
 		break;
 	}
 	case 3: {
-		return new ellipse();
+		return new SVGEllipse();
 		break;
 	}
 	case 4: {
-		return new line();
+		return new SVGLine();
 		break;
 	}
 	case 5: {
-		return new polyline();
+		return new SVGPolyline();
 		break;
 	}
 	case 6: {
-		return new polygon();
+		return new SVGPolygon();
 		break;
 	}
 	case 7: {
-		return new text();
+		return new SVGText();
 		break;
 	}
 	case 8: {
-		return new path();
+		return new SVGPath();
 		break;
 	}
 	case 9: {
-		return new group();
+		return new SVGGroup();
 		break;
 	}
 	default: return NULL;

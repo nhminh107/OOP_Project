@@ -1,14 +1,14 @@
 #include "Library.h"
 
-polygon::polygon() : Shape() {
+SVGPolygon::SVGPolygon() : Shape() {
     Vers = {};
 }
 
-polygon::~polygon() {
+SVGPolygon::~SVGPolygon() {
     Vers = {};
 }
 
-void polygon::updateProperty() {
+void SVGPolygon::updateProperty() {
 
     stringstream ss(line_str);
     string property, val, temp;
@@ -34,14 +34,14 @@ void polygon::updateProperty() {
 
 }
 
-vector<point> polygon::getVers() {
+vector<point> SVGPolygon::getVers() {
     return this->Vers;
 }
 
-void polygon::setVers(vector<point> Vers) {
+void SVGPolygon::setVers(vector<point> Vers) {
     this->Vers = Vers;
 }
-void polygon::draw(Graphics& graphics) {
+void SVGPolygon::draw(Graphics& graphics) {
     GraphicsState save = graphics.Save();
 
     Pen penPolygon(

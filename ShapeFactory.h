@@ -1,5 +1,5 @@
-#ifndef _FACTORYFIGURE_H_
-#define _FACTORYFIGURE_H_
+#ifndef _SHAPEFACTORY_H_
+#define _SHAPEFACTORY_H_
 
 class factoryfigure {
 private:

@@ -1,13 +1,13 @@
 #ifndef _POLYLINE_H_
 #define _POLYLINE_H_
 
-class polyline : public Shape {
+class SVGPolyline : public Shape {
 private:
 	vector<point> Vers;
 
 public:
-	polyline();
-	~polyline();
+	SVGPolyline();
+	~SVGPolyline();
 
 	void draw(Graphics&) override;
 	void updateProperty();

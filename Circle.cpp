@@ -1,16 +1,16 @@
 ﻿#include "Library.h"
 
-circle::circle() : Shape() {
+SVGCircle::SVGCircle() : Shape() {
     this->setCenter(0, 0);
     this->setRadius(0);
 }
 
-circle::~circle() {
+SVGCircle::~SVGCircle() {
     this->setCenter(0, 0);
     this->setRadius(0);
 }
 
-void circle::updateProperty() {
+void SVGCircle::updateProperty() {
     stringstream ss(line_str);
     string attribute, val, temp;
 
@@ -27,24 +27,24 @@ void circle::updateProperty() {
             this->center.setY((stof(val)));
     }
 }
-point circle::getCenter() {
+point SVGCircle::getCenter() {
     return this->center;
 }
 
-float circle::getRadius() {
+float SVGCircle::getRadius() {
     return this->radius;
 }
 
-void circle::setCenter(float x, float y) {
+void SVGCircle::setCenter(float x, float y) {
     this->center.setX(x);
     this->center.setY(y);
 }
 
-void circle::setRadius(float r) {
+void SVGCircle::setRadius(float r) {
     this->radius = r;
 }
 
-void circle::draw(Graphics& graphics) {
+void SVGCircle::draw(Graphics& graphics) {
     // 1. Lưu trạng thái Graphics
     GraphicsState save = graphics.Save();
 

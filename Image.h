@@ -4,13 +4,13 @@
 class image {
 private:
 	string fileName;
-	group* root;
+	SVGGroup* root;
 
 public:
 	image(string);
 	void parseImage(parser, viewbox&);
 	void renderImage(renderer, Graphics&);
-	group* getRoot() { return this->root; }
+	SVGGroup* getRoot() { return this->root; }
 	~image();
 };
 

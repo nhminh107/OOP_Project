@@ -1,5 +1,5 @@
-#ifndef _FIGURE_H_
-#define _FIGURE_H_
+#ifndef _SHAPE_H_
+#define _SHAPE_H_
 
 class Shape {
 protected:

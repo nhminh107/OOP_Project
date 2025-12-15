@@ -1,13 +1,13 @@
 #ifndef _LINE_H_
 #define _LINE_H_
 
-class line :public Shape {
+class SVGLine :public Shape {
 private:
 	point p1, p2;
 
 public:
-	line();
-	~line();
+	SVGLine();
+	~SVGLine();
 
 	void draw(Graphics&) override;
 	void updateProperty();

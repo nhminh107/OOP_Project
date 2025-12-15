@@ -1,18 +1,18 @@
 #include "Library.h"
 
-ellipse::ellipse() : Shape() {
+SVGEllipse::SVGEllipse() : Shape() {
 	rx = ry = 0;
 	center.setX(0);
 	center.setY(0);
 }
 
-ellipse::~ellipse() {
+SVGEllipse::~SVGEllipse() {
 	rx = ry = 0;
 	center.setX(0);
 	center.setY(0);
 }
 
-void ellipse::updateProperty() {
+void SVGEllipse::updateProperty() {
 	stringstream ss(line_str);
 	string property, val, temp;
 
@@ -31,31 +31,31 @@ void ellipse::updateProperty() {
 	}
 }
 
-point ellipse::getCenter() {
+point SVGEllipse::getCenter() {
 	return this->center;
 }
 
-float ellipse::getRx() {
+float SVGEllipse::getRx() {
 	return this->rx;
 }
 
-float ellipse::getRy() {
+float SVGEllipse::getRy() {
 	return this->ry;
 }
 
-void ellipse::setCenter(float x, float y) {
+void SVGEllipse::setCenter(float x, float y) {
 	this->center.setX(x);
 	this->center.setY(y);
 }
 
-void ellipse::setRx(float rx) {
+void SVGEllipse::setRx(float rx) {
 	this->rx = rx;
 }
 
-void ellipse::setRy(float ry) {
+void SVGEllipse::setRy(float ry) {
 	this->ry = ry;
 }
-void ellipse::draw(Graphics& graphics) {
+void SVGEllipse::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
 	Pen penEllipse(Color(this->getStroke().getStrokeColor().opacity * 255,
 		this->getStroke().getStrokeColor().r,

@@ -1,14 +1,14 @@
 #ifndef _ELLIPSE_H_
 #define _ELLIPSE_H_
 
-class ellipse : public Shape {
+class SVGEllipse : public Shape {
 private:
 	float rx, ry;
 	point center;
 
 public:
-	ellipse();
-	~ellipse();
+	SVGEllipse();
+	~SVGEllipse();
 
 	point getCenter();
 	float getRx();

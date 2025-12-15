@@ -1,6 +1,6 @@
 #include "Library.h"
 
-text::text() :Shape() {
+SVGText::SVGText() :Shape() {
 	textPos.setX(0);
 	textPos.setY(0);
 	fontSize = 16;
@@ -11,14 +11,14 @@ text::text() :Shape() {
 	textAnchor = "start";
 }
 
-text::~text() {
+SVGText::~SVGText() {
 	fontSize = 0;
 	textPos.setX(0);
 	textPos.setY(0);
 	content = "";
 }
 
-void text::updateProperty() {
+void SVGText::updateProperty() {
 	size_t pos = line_str.find(">");
 	string temp = line_str.substr(0, pos);
 	stringstream ss(temp);
@@ -50,7 +50,7 @@ void text::updateProperty() {
 	this->content = text_name;
 }
 
-void text::draw(Graphics& graphics) {
+void SVGText::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
 	wstring_convert<codecvt_utf8<wchar_t>> converter;
 	wstring wContent = converter.from_bytes(this->getContent());
@@ -106,67 +106,67 @@ void text::draw(Graphics& graphics) {
 	graphics.Restore(save);
 }
 
-point text::getTextPos() {
+point SVGText::getTextPos() {
 	return this->textPos;
 }
 
-float text::getFontSize() {
+float SVGText::getFontSize() {
 	return this->fontSize;
 }
 
-string text::getContent() {
+string SVGText::getContent() {
 	return this->content;
 }
 
-void text::setTextPos(float x, float y) {
+void SVGText::setTextPos(float x, float y) {
 	this->textPos.setX(x);
 	this->textPos.setY(y);
 }
 
-void text::setFontSize(float fontSize) {
+void SVGText::setFontSize(float fontSize) {
 	this->fontSize = fontSize;
 }
 
-void text::setContent(string content) {
+void SVGText::setContent(string content) {
 	this->content = content;
 }
 
-void text::setFontFamily(string fontFamily) {
+void SVGText::setFontFamily(string fontFamily) {
 	this->fontFamily = fontFamily;
 }
 
-void text::setTextAnchor(string textAnchor) {
+void SVGText::setTextAnchor(string textAnchor) {
 	this->textAnchor = textAnchor;
 }
 
-void text::setFontStyle(string fontStyle) {
+void SVGText::setFontStyle(string fontStyle) {
 	this->fontStyle = fontStyle;
 }
 
-void text::setDx(float dx) {
+void SVGText::setDx(float dx) {
 	this->dx = dx;
 }
 
-void text::setDy(float dy) {
+void SVGText::setDy(float dy) {
 	this->dy = dy;
 }
 
-string text::getFontFamily() {
+string SVGText::getFontFamily() {
 	return this->fontFamily;
 }
 
-string text::getTextAnchor() {
+string SVGText::getTextAnchor() {
 	return this->textAnchor;
 }
 
-string text::getFontStyle() {
+string SVGText::getFontStyle() {
 	return this->fontStyle;
 }
 
-float text::getDx() {
+float SVGText::getDx() {
 	return this->dx;
 }
 
-float text::getDy() {
+float SVGText::getDy() {
 	return this->dy;
 }

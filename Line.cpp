@@ -1,16 +1,16 @@
 #include "Library.h"
 
-line::line() :Shape() {
+SVGLine::SVGLine() :Shape() {
 	p1.setX(0); p1.setY(0);
 	p2.setX(0); p2.setY(0);
 }
 
-line::~line() {
+SVGLine::~SVGLine() {
 	p1.setX(0); p1.setY(0);
 	p2.setX(0); p2.setY(0);
 }
 
-void line::updateProperty() {
+void SVGLine::updateProperty() {
 	stringstream ss(line_str);
 	string attribute, val, temp;
 
@@ -33,7 +33,7 @@ void line::updateProperty() {
 	}
 }
 
-void line::draw(Graphics& graphics) {
+void SVGLine::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
 	Pen penLine(Color(getStroke().getStrokeColor().opacity * 255, getStroke().getStrokeColor().r, getStroke().getStrokeColor().g, getStroke().getStrokeColor().b), getStroke().getStrokeWidth());
 	vector<pair<string, vector<float>>> transVct = getTransVct();
@@ -57,18 +57,18 @@ void line::draw(Graphics& graphics) {
 	graphics.Restore(save);
 }
 
-point line::getP1() {
+point SVGLine::getP1() {
 	return this->p1;
 }
 
-point line::getP2() {
+point SVGLine::getP2() {
 	return this->p2;
 }
 
-void line::setP1(point p1) {
+void SVGLine::setP1(point p1) {
 	this->p1 = p1;
 }
 
-void line::setP2(point p2) {
+void SVGLine::setP2(point p2) {
 	this->p2 = p2;
 }
