@@ -1,25 +1,25 @@
 #include "Library.h"
 
 SVGGroup::SVGGroup() :Shape() {
-	figureArray = {};
+	shapeArray = {};
 }
 
 SVGGroup& SVGGroup:: operator = (const SVGGroup& grp) {
 	if (this != &grp) {
-		this->figureArray = grp.figureArray;
+		this->shapeArray = grp.shapeArray;
 		this->parent = grp.parent;
 	}
 	return *this;
 }
 SVGGroup::~SVGGroup() {
-    for (auto it = this->figureArray.begin(); it != this->figureArray.end(); it++) {
-        figureArray.erase(it); 
+    for (auto it = this->shapeArray.begin(); it != this->shapeArray.end(); it++) {
+        shapeArray.erase(it); 
     }
     delete this->parent; 
 }
 void SVGGroup::draw(Graphics& graphics) {
 
-    if (this->figureArray.empty())
+    if (this->shapeArray.empty())
         return;
 
     GraphicsState save = graphics.Save();
@@ -52,9 +52,9 @@ void SVGGroup::draw(Graphics& graphics) {
         }
     }
 
-    for (Shape* fig : this->figureArray) {
-        if (fig != nullptr) {
-            fig->draw(graphics);
+    for (Shape* shape : this->shapeArray) {
+        if (shape != nullptr) {
+            shape->draw(graphics);
         }
     }
 
@@ -62,25 +62,25 @@ void SVGGroup::draw(Graphics& graphics) {
     graphics.Restore(save);
 }
 SVGGroup::SVGGroup(const SVGGroup& grp) {
-	this->figureArray = grp.figureArray;
+	this->shapeArray = grp.shapeArray;
 }
 
-void SVGGroup::addFigure(Shape* fig) {
-	this->figureArray.push_back(fig);
+void SVGGroup::addShape(Shape* shape) {
+	this->shapeArray.push_back(shape);
 }
 
 void SVGGroup::setParent(SVGGroup* parent) {
 	this->parent = parent;
 }
 
-void SVGGroup::setFigureArray(vector<Shape*> figureArrray) {
-	this->figureArray = figureArray;
+void SVGGroup::setShapeArray(vector<Shape*> figureArrray) {
+	this->shapeArray = shapeArray;
 }
 
 SVGGroup* SVGGroup::getParent() {
 	return this->parent;
 }
 
-vector<Shape*> SVGGroup::getFigureArray() {
-	return this->figureArray;
+vector<Shape*> SVGGroup::getShapeArray() {
+	return this->shapeArray;
 }

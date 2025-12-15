@@ -85,10 +85,10 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 }
 
 // --- HÀM XỬ LÝ THUỘC TÍNH (ĐÃ BỎ LOGIC GRADIENT) ---
-void parser::processProperty(string name, string property, string textName, Shape*& fig) {
-	fig->setName(name);
-	fig->setTextName(textName);
-	fig->setLine(property);
+void parser::processProperty(string name, string property, string textName, Shape*& shape) {
+	shape->setName(name);
+	shape->setTextName(textName);
+	shape->setLine(property);
 
 	stringstream ss(property);
 	string attribute, value;
@@ -170,7 +170,7 @@ void parser::processProperty(string name, string property, string textName, Shap
 	else {
 		processColor(fill, fillOpa, clr);
 	}
-	fig->setColor(clr);
+	shape->setColor(clr);
 
 	// 2. Xử lý Stroke (Viền)
 	stroke strk;
@@ -183,12 +183,12 @@ void parser::processProperty(string name, string property, string textName, Shap
 		processColor(sStroke, strokeOpa, strokeColor);
 
 	strk.setStrokeColor(strokeColor);
-	fig->setStroke(strk);
+	shape->setStroke(strk);
 
 	// 3. Xử lý Transform & Update Property riêng của hình
-	fig->updateProperty();
+	shape->updateProperty();
 	if (!strTransform.empty()) {
-		fig->updateTransformVct(strTransform);
+		shape->updateTransformVct(strTransform);
 	}
 }
 
@@ -202,7 +202,7 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 	loadColorMap();
 
 	string line_str = "";
-	factoryfigure factory;
+	ShapeFactory factory;
 
 	stack<string> groupStack;
 	groupStack.push(" ");
@@ -276,7 +276,7 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 			SVGGroup* newGroup = new SVGGroup();
 			newGroup->setName("g");
 			newGroup->setParent(curGroup);
-			curGroup->addFigure(newGroup);
+			curGroup->addShape(newGroup);
 			curGroup = newGroup;
 		}
 		// Xử lý thẻ đóng Group </g>
@@ -299,15 +299,15 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 			}
 
 			// Tạo hình từ Factory
-			Shape* fig = factory.getFigure(name);
+			Shape* shape = factory.getShape(name);
 
 			// Nếu Factory trả về NULL (vd: gặp thẻ <defs>, <linearGradient>...) -> Bỏ qua luôn
-			if (fig) {
+			if (shape) {
 				if (!groupStack.empty()) {
 					property = " " + groupStack.top() + " " + property + " ";
 				}
-				processProperty(name, property, textContent, fig);
-				curGroup->addFigure(fig);
+				processProperty(name, property, textContent, shape);
+				curGroup->addShape(shape);
 			}
 		}
 	}

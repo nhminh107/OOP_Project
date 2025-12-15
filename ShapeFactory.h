@@ -1,14 +1,14 @@
 #ifndef _SHAPEFACTORY_H_
 #define _SHAPEFACTORY_H_
 
-class factoryfigure {
+class ShapeFactory {
 private:
-	unordered_map<string, int> figureId;
+	unordered_map<string, int> shapeID;
 
 public:
-	factoryfigure();
-	Shape* getFigure(string name);
-	unordered_map<string, int> getFigureId();
+	ShapeFactory();
+	Shape* getShape(string name);
+	unordered_map<string, int> getShapeID();
 };
 
 #endif

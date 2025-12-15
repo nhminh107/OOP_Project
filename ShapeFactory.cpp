@@ -1,6 +1,6 @@
 #include "Library.h"
-Shape* factoryfigure::getFigure(string name) {
-	int num = figureId[name];
+Shape* ShapeFactory::getShape(string name) {
+	int num = shapeID[name];
 	switch (num) {
 	case 1: {
 		return new SVGRectangle();
@@ -43,18 +43,18 @@ Shape* factoryfigure::getFigure(string name) {
 	return NULL;
 }
 
-factoryfigure::factoryfigure() {
-	figureId["rect"] = 1;
-	figureId["circle"] = 2;
-	figureId["ellipse"] = 3;
-	figureId["line"] = 4;
-	figureId["polyline"] = 5;
-	figureId["polygon"] = 6;
-	figureId["text"] = 7;
-	figureId["path"] = 8;
-	figureId["g"] = 9;
+ShapeFactory::ShapeFactory() {
+	shapeID["rect"] = 1;
+	shapeID["circle"] = 2;
+	shapeID["ellipse"] = 3;
+	shapeID["line"] = 4;
+	shapeID["polyline"] = 5;
+	shapeID["polygon"] = 6;
+	shapeID["text"] = 7;
+	shapeID["path"] = 8;
+	shapeID["g"] = 9;
 }
 
-unordered_map<string, int> factoryfigure::getFigureId() {
-	return this->figureId;
+unordered_map<string, int> ShapeFactory::getShapeID() {
+	return this->shapeID;
 }

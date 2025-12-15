@@ -2,7 +2,7 @@
 #define _GROUP_H_
 
 class SVGGroup : public Shape {
-	vector<Shape*> figureArray;
+	vector<Shape*> shapeArray;
 	SVGGroup* parent;
 public:
 	SVGGroup();
@@ -11,11 +11,11 @@ public:
 	SVGGroup& operator = (const SVGGroup&);
 
 	void setParent(SVGGroup*);
-	void setFigureArray(vector<Shape*>);
+	void setShapeArray(vector<Shape*>);
 	SVGGroup* getParent();
-	vector<Shape*> getFigureArray();
+	vector<Shape*> getShapeArray();
 	void draw(Graphics& graphics) override;
-	void addFigure(Shape*);
+	void addShape(Shape*);
 };
 
 #endif

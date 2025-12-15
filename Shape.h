@@ -3,7 +3,7 @@
 
 class Shape {
 protected:
-    string fig, text_name, line_str;
+    string shape, text_name, line_str;
     vector<pair<string, vector<float>>> transVct;
     bool isSelected;
     stroke strk;

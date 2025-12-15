@@ -1,18 +1,18 @@
 #include "Library.h"
 Shape::Shape() {
-	text_name = "", line_str = "", fig = "";
+	text_name = "", line_str = "", shape = "";
 	isSelected = false;
 }
 
 void Shape::updateProperty() {}
 
 string Shape::getName() {
-	return this->fig;
+	return this->shape;
 }
 
 
 void Shape::setName(string s) {
-	this->fig = s;
+	this->shape = s;
 }
 
 void Shape::setStroke(stroke stroke) {
