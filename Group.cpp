@@ -12,10 +12,13 @@ SVGGroup& SVGGroup:: operator = (const SVGGroup& grp) {
 	return *this;
 }
 SVGGroup::~SVGGroup() {
-    for (auto it = this->shapeArray.begin(); it != this->shapeArray.end(); it++) {
-        shapeArray.erase(it); 
+    for (auto fig : this->shapeArray) {
+        if (fig != nullptr) {
+            delete fig;
+        }
     }
-    delete this->parent; 
+    this->shapeArray.clear();
+    this->parent = nullptr;
 }
 void SVGGroup::draw(Graphics& graphics) {
 

@@ -77,7 +77,7 @@ string g_InputFileName = "";
 image* g_pImg = nullptr;
 viewbox* g_vb = nullptr;
 
-// ===== ĐỊNH NGHĨA HÀM =====
+// ĐỊNH NGHĨA HÀM
 // --- XỬ LÝ CỬA SỔ CHÀO MỪNG (INTRO) - PHIÊN BẢN PRO ---
 LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -100,14 +100,12 @@ LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             graphics.DrawImage(&bgImage, 0, 0, rect.right, rect.bottom);
         }
         else {
-            // Gradient nền xanh tím hiện đại nếu không có ảnh
             LinearGradientBrush bgBrush(Point(0, 0), Point(winW, winH),
                 Color(255, 100, 149, 237), Color(255, 123, 104, 238));
             graphics.FillRectangle(&bgBrush, 0, 0, rect.right, rect.bottom);
         }
 
         // --- 2. VẼ KHUNG (CARD) Ở GIỮA ---
-        // Kích thước khung: Rộng 700px, Cao 500px (Nhỏ hơn cửa sổ chính)
         float cardW = 700.0f;
         float cardH = 550.0f;
         float cardX = (winW - cardW) / 2.0f;
@@ -232,9 +230,7 @@ void ShowWelcomeWindow(HINSTANCE hInstance) {
     }
 }
 
-// =============================================================
 // PHẦN 3: XỬ LÝ LOGIC CỬA SỔ CHÍNH
-// =============================================================
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
