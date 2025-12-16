@@ -50,6 +50,8 @@ using namespace Gdiplus;
 #include "Render.h" 
 #include "Parser.h"
 #include "Image.h"
+#include "FileExplorer.h"
+#include "WindowApp.h"
 
 #define Pi 3.14159265358979323846
 #define Kappa 0.551915024494
