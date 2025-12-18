@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <stack>
 #include <locale>
+#include <algorithm>
 #include <codecvt>
 #include "rapidxml.hpp"
 #include <objidl.h>

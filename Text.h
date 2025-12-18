@@ -30,7 +30,7 @@ public:
 	void setFontStyle(string);
 	void setDx(float);
 	void setDy(float);
-
+	RectF getBoundingBox() override;
 	void draw(Graphics&) override;
 };
 

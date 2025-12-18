@@ -1,4 +1,4 @@
-#include "Library.h"
+﻿#include "Library.h"
 
 SVGLine::SVGLine() :Shape() {
 	p1.setX(0); p1.setY(0);
@@ -57,6 +57,26 @@ void SVGLine::draw(Graphics& graphics) {
 	graphics.Restore(save);
 }
 
+RectF SVGLine::getBoundingBox() {
+
+	float x1 = p1.getX(); 
+	float x2 = p2.getX(); 
+	float y1 = p1.getY(); 
+	float y2 = p2.getY(); 
+
+	RectF boundingBox; 
+
+	boundingBox.X = min(x1, x2); 
+	boundingBox.Y = min(y1, y2); 
+
+	boundingBox.Width = abs(x1 - x2); 
+	boundingBox.Height = abs(y1 - y2); 
+
+	if (boundingBox.Width == 0) boundingBox.Width = 0.1f; // Một giá trị rất nhỏ để tránh lỗi
+	if (boundingBox.Height == 0) boundingBox.Height = 0.1f;
+
+	return boundingBox;
+}
 point SVGLine::getP1() {
 	return this->p1;
 }

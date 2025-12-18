@@ -8,6 +8,36 @@ SVGPolygon::~SVGPolygon() {
     Vers = {};
 }
 
+RectF SVGPolygon::getBoundingBox() {
+
+    if (this->Vers.empty()) {
+        return RectF(0, 0, 0, 0);
+    }
+
+    float min_X = FLT_MAX;
+    float min_Y = FLT_MAX;
+    float max_X = -FLT_MAX;
+    float max_Y = -FLT_MAX;
+
+    for (auto& p : this->Vers) {
+        float x_cur = p.getX();
+        float y_cur = p.getY();
+
+        if (x_cur > max_X) max_X = x_cur;
+        if (x_cur < min_X) min_X = x_cur;
+        if (y_cur > max_Y) max_Y = y_cur;
+        if (y_cur < min_Y) min_Y = y_cur;
+    }
+
+    RectF boundingBox;
+    boundingBox.X = min_X;
+    boundingBox.Y = min_Y;
+
+    boundingBox.Width = max_X - min_X;
+    boundingBox.Height = max_Y - min_Y;
+
+    return boundingBox;
+}
 void SVGPolygon::updateProperty() {
 
     stringstream ss(line_str);

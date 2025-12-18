@@ -11,7 +11,7 @@ public:
 
 	void draw(Graphics&) override;
 	void updateProperty();
-
+	RectF getBoundingBox() override;
 	vector<point> getVers();
 	void setVers(vector<point>);
 };
