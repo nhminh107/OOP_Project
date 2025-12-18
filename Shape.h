@@ -27,6 +27,7 @@ public:
     void setColor(color);
     void updateTransformVct(string);
     void getTransformMatrix(Gdiplus::Matrix* matrix);
+    virtual RectF getBoundingBox() = 0; 
     virtual void draw(Graphics& graphics) = 0;
 };
 
