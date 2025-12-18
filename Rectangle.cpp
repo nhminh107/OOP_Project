@@ -30,6 +30,17 @@ void SVGRectangle::updateProperty() {
 			this->height = stof(val);
 	}
 }
+
+RectF SVGRectangle::getBoundingBox() {
+	RectF boundingBox; 
+
+	boundingBox.X = this->root.getX(); 
+	boundingBox.Y = this->root.getY(); 
+	boundingBox.Width = this->width; 
+	boundingBox.Height = this->height; 
+
+	return boundingBox; 
+}
 void SVGRectangle::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();

@@ -44,6 +44,16 @@ void SVGCircle::setRadius(float r) {
     this->radius = r;
 }
 
+RectF SVGCircle::getBoundingBox() {
+    RectF boundingBox;
+    boundingBox.X = this->center.getX() - this->radius;
+    boundingBox.Y = this->center.getY() - this->radius;
+
+    boundingBox.Width = 2.0 * radius;
+    boundingBox.Height = 2.0 * radius;
+
+    return boundingBox;
+}
 void SVGCircle::draw(Graphics& graphics) {
     // 1. Lưu trạng thái Graphics
     GraphicsState save = graphics.Save();

@@ -15,7 +15,7 @@ public:
 
 	void setCenter(float, float);
 	void setRadius(float);
-
+	RectF getBoundingBox() override;
 	void updateProperty();
 	void draw(Graphics&) override;
 };

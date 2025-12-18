@@ -13,7 +13,7 @@ public:
 	point getRoot();
 	float getWidth();
 	float getHeight();
-
+	RectF getBoundingBox() override;
 	void setRoot(point);
 	void setWidth(float);
 	void setHeight(float);
