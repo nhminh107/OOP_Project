@@ -8,7 +8,6 @@ private:
 public:
 	SVGPolyline();
 	~SVGPolyline();
-
 	void draw(Graphics&) override;
 	void updateProperty();
 	RectF getBoundingBox() override;

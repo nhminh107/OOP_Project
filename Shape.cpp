@@ -124,6 +124,16 @@ vector<pair<string, vector<float>>> Shape::getTransVct() {
 	return this->transVct;
 }
 
+string Shape::getFillGradientID() {
+	return this->fillGradientID; 
+}
+bool Shape::getIsUseGradient() {
+	return this->isUseGradient; 
+}
+void Shape::setFillGradientID(const string& t) {
+	this->fillGradientID = t; 
+	return; 
+}
 void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {
 	matrix->Reset();
 

@@ -9,7 +9,6 @@ private:
 public:
 	SVGRectangle();
 	~SVGRectangle();
-
 	point getRoot();
 	float getWidth();
 	float getHeight();
