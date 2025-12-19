@@ -16,6 +16,7 @@ public:
 	vector<Shape*> getShapeArray();
 	void draw(Graphics& graphics) override;
 	void addShape(Shape*);
+	RectF getBoundingBox() override; 
 };
 
 #endif
