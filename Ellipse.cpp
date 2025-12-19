@@ -55,6 +55,17 @@ void SVGEllipse::setRx(float rx) {
 void SVGEllipse::setRy(float ry) {
 	this->ry = ry;
 }
+
+RectF SVGEllipse::getBoundingBox() {
+	RectF boundingBox; 
+	boundingBox.X = this->center.getX() - this->rx; 
+	boundingBox.Y = this->center.getY() - this->ry; 
+
+	boundingBox.Width = 2.0 * ry; 
+	boundingBox.Height = 2.0 * rx;
+	
+	return boundingBox; 
+}
 void SVGEllipse::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
 	Pen penEllipse(Color(this->getStroke().getStrokeColor().opacity * 255,

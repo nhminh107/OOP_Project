@@ -1,4 +1,4 @@
-#include "Library.h"
+﻿#include "Library.h"
 
 SVGGroup::SVGGroup() :Shape() {
 	shapeArray = {};
@@ -19,6 +19,47 @@ SVGGroup::~SVGGroup() {
     }
     this->shapeArray.clear();
     this->parent = nullptr;
+}
+
+RectF SVGGroup::getBoundingBox() {
+	if (this->shapeArray.empty()) {
+		return RectF(0, 0, 0, 0);
+	}
+
+	float min_X = FLT_MAX;
+	float min_Y = FLT_MAX;
+	float max_X = -FLT_MAX;
+	float max_Y = -FLT_MAX;
+
+	bool hasValidChild = false;
+
+	for (Shape* shape : this->shapeArray) {
+		if (shape != nullptr) {
+			//Nếu con là Group, nó sẽ tự tính box của nó
+			RectF childBox = shape->getBoundingBox();
+			if (childBox.Width <= 0 && childBox.Height <= 0) continue;
+
+			hasValidChild = true;
+			if (childBox.X < min_X)
+				min_X = childBox.X;
+
+			if (childBox.Y < min_Y)
+				min_Y = childBox.Y;
+
+			float childRight = childBox.X + childBox.Width;
+			if (childRight > max_X)
+				max_X = childRight;
+			float childBottom = childBox.Y + childBox.Height;
+			if (childBottom > max_Y)
+				max_Y = childBottom;
+		}
+	}
+
+	if (!hasValidChild) {
+		return RectF(0, 0, 0, 0);
+	}
+
+	return RectF(min_X, min_Y, max_X - min_X, max_Y - min_Y);
 }
 void SVGGroup::draw(Graphics& graphics) {
 

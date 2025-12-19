@@ -14,7 +14,7 @@ public:
 
 	point getP1();
 	point getP2();
-
+	RectF getBoundingBox() override; 
 	void setP1(point);
 	void setP2(point);
 };

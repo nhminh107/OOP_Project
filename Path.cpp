@@ -385,12 +385,125 @@ void SVGPath::updateProperty() {
 		}
 	}
 }
+RectF SVGPath::getBoundingBox() {
 
+	// Nếu mà lỗi thì chuyển sang dùng getBounds của GDI+ 
+	if (this->vct.empty()) {
+		return RectF(0, 0, 0, 0);
+	}
+
+	float min_X = FLT_MAX;
+	float min_Y = FLT_MAX;
+	float max_X = -FLT_MAX;
+	float max_Y = -FLT_MAX;
+
+	// Vị trí con trỏ bút vẽ hiện tại
+	float curX = 0;
+	float curY = 0;
+
+	// Helper lambda để cập nhật min/max nhanh gọn
+	auto updateBounds = [&](float x, float y) {
+		if (x < min_X) min_X = x;
+		if (x > max_X) max_X = x;
+		if (y < min_Y) min_Y = y;
+		if (y > max_Y) max_Y = y;
+		};
+
+	for (const auto& cmd : this->vct) {
+		char type = cmd.first;
+		const vector<float>& args = cmd.second;
+
+		bool isRelative = (type >= 'a' && type <= 'z');
+
+		// 1. Lệnh di chuyển và vẽ thẳng (M, L, T) - 2 tham số (x, y)
+		if (type == 'M' || type == 'm' || type == 'L' || type == 'l' || type == 'T' || type == 't') {
+			for (size_t i = 0; i < args.size(); i += 2) {
+				float x = args[i];
+				float y = args[i + 1];
+
+				if (isRelative) { x += curX; y += curY; }
+
+				updateBounds(x, y);
+				curX = x; curY = y; // Cập nhật vị trí bút
+			}
+		}
+		// 2. Lệnh vẽ ngang (H) - 1 tham số (x)
+		else if (type == 'H' || type == 'h') {
+			for (size_t i = 0; i < args.size(); i++) {
+				float x = args[i];
+				if (isRelative) x += curX;
+
+				updateBounds(x, curY); // Y giữ nguyên
+				curX = x;
+			}
+		}
+		// 3. Lệnh vẽ dọc (V) - 1 tham số (y)
+		else if (type == 'V' || type == 'v') {
+			for (size_t i = 0; i < args.size(); i++) {
+				float y = args[i];
+				if (isRelative) y += curY;
+
+				updateBounds(curX, y); // X giữ nguyên
+				curY = y;
+			}
+		}
+		// 4. Cubic Bezier (C) - 6 tham số (x1, y1, x2, y2, x, y)
+		else if (type == 'C' || type == 'c') {
+			for (size_t i = 0; i < args.size(); i += 6) {
+				// Ta lấy cả điểm điều khiển để tính bao đóng (an toàn nhất)
+				for (int j = 0; j < 6; j += 2) {
+					float x = args[i + j];
+					float y = args[i + j + 1];
+					if (isRelative) { x += curX; y += curY; }
+					updateBounds(x, y);
+
+					// Cập nhật bút ở điểm cuối cùng (cặp thứ 3)
+					if (j == 4) { curX = x; curY = y; }
+				}
+			}
+		}
+		// 5. Smooth Cubic (S) / Quadratic (Q) - 4 tham số (x1, y1, x, y)
+		else if (type == 'S' || type == 's' || type == 'Q' || type == 'q') {
+			for (size_t i = 0; i < args.size(); i += 4) {
+				for (int j = 0; j < 4; j += 2) {
+					float x = args[i + j];
+					float y = args[i + j + 1];
+					if (isRelative) { x += curX; y += curY; }
+					updateBounds(x, y);
+
+					if (j == 2) { curX = x; curY = y; }
+				}
+			}
+		}
+		else if (type == 'A' || type == 'a') {
+			for (size_t i = 0; i < args.size(); i += 7) {
+				float x = args[i + 5];
+				float y = args[i + 6];
+
+				if (isRelative) { x += curX; y += curY; }
+
+				updateBounds(x, y);
+				curX = x; curY = y;
+			}
+		}
+	}
+
+	RectF boundingBox;
+	boundingBox.X = min_X;
+	boundingBox.Y = min_Y;
+	boundingBox.Width = max_X - min_X;
+	boundingBox.Height = max_Y - min_Y;
+
+	// Fix lỗi nếu width/height = 0
+	if (boundingBox.Width <= 0) boundingBox.Width = 0.1f;
+	if (boundingBox.Height <= 0) boundingBox.Height = 0.1f;
+
+	return boundingBox;
+}
 void SVGPath::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
 
-	// 2. Xác định chế độ tô màu (Fill Mode) dựa trên thuộc tính fillRule của class
 	FillMode mode;
 	if (this->fillRule == "evenodd")
 		mode = FillModeAlternate;
@@ -434,14 +547,13 @@ void SVGPath::draw(Graphics& graphics) {
 			while (numPoint > 3) {
 				PointF P1(params[j + 0], params[j + 1]);
 				PointF P2(params[j + 2], params[j + 3]);
-				graphicsPath.AddBezier(P0, P1, P2, P2); // GDI+ giả lập bậc 2 bằng bậc 3
+				graphicsPath.AddBezier(P0, P1, P2, P2);
 				P0 = P2;
 				numPoint -= 4;
 				j += 4;
 			}
 		}
 
-		// --- XỬ LÝ ĐƯỜNG CONG BEZIER BẬC 3 (C/c) ---
 		else if (command == 'C' || command == 'c') {
 			int j = 0;
 			while (numPoint > 5) {

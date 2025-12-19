@@ -1,4 +1,4 @@
-#include "Library.h"
+﻿#include "Library.h"
 
 SVGText::SVGText() :Shape() {
 	textPos.setX(0);
@@ -118,6 +118,20 @@ string SVGText::getContent() {
 	return this->content;
 }
 
+RectF SVGText::getBoundingBox() {
+	RectF boundingBox;
+
+	// 1. Tọa độ X
+	boundingBox.X = this->dx;
+
+	boundingBox.Y = this->dy - this->fontSize;
+	//Nếu lỗi tọa độ thì thử bỏ -fontSize đi 
+
+	boundingBox.Height = this->fontSize;
+	//Nếu thấy vẫn hơi rộng thì nhân 0.55, đây là tỉ lệ của Arial / Times 
+	boundingBox.Width = (float)(this->content.size()) * this->fontSize * 0.6f;
+	return boundingBox;
+}
 void SVGText::setTextPos(float x, float y) {
 	this->textPos.setX(x);
 	this->textPos.setY(y);

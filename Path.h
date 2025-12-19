@@ -14,7 +14,7 @@ public:
 	string getStrokeLineJoin();
 	string getStrokeLineCap();
 	string getFillRule();
-
+	RectF getBoundingBox() override; 
 	void setStrokeLineJoin(string);
 	void setStrokeLineCap(string);
 	void setFillRule(string);
