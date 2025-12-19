@@ -1,4 +1,4 @@
-#ifndef _SHAPE_H_
+﻿#ifndef _SHAPE_H_
 #define _SHAPE_H_
 
 class Shape {
@@ -8,18 +8,21 @@ protected:
     bool isSelected;
     stroke strk;
     color fill;
-
+    string fillGradientID; //Lưu tên ID, vd: "grad1". Khi Parser thì lưu vào theo ID luôn
+    bool isUseGradient; //True nếu ID != "" để quá trình vẽ nhanh hơn
 public:
     Shape();
     virtual ~Shape();
     virtual void updateProperty();
-
     string getName();
     string getTextName();
     stroke getStroke();
     color getColor();
+    string getFillGradientID();
+    bool getIsUseGradient();
     vector<pair<string, vector<float>>> getTransVct();
     void setName(string);
+    void setFillGradientID(const string& id);
     void setTextName(string);
     void setLine(string);
     void setStroke(stroke);
