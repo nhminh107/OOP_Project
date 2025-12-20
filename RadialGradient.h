@@ -1,6 +1,7 @@
 #ifndef _RADIALGRADIENT_H_
 #define _RADIALGRADIENT_H_
-class radialGradient {
+#include"Library.h"
+class radialGradient : public gradient {
 private:
 	float cx, cy, r, fx, fy;
 	bool isLink;
