@@ -9,7 +9,7 @@ vector<pair<string, vector<float>>> gradient::getGradTrans() {
 string gradient::getLineData() {
 	return this->lineData;
 }
-int gradient::getGradID() {
+string gradient::getGradID() {
 	return this->gradID;
 }
 
@@ -19,7 +19,7 @@ void gradient::setStopArr(vector<stop> s) {
 void gradient::setLineData(string line) {
 	this->lineData = line;
 }
-void gradient::setGradID(int id) {
+void gradient::setGradID(string id) {
 	this->gradID = id;
 }
 void gradient::addStop(stop s) {
@@ -43,5 +43,14 @@ gradient& gradient::operator=(const gradient& grad) {
 		}
 	}
 	return *this;
+}
+stop::stop()
+{
+	offset = 0;
+	stopColor = { 0, 0, 0, 1 };
+}
+stop::stop(float off, color c) {
+	offset = off;
+	stopColor = c;
 }
 gradient::~gradient() {}
