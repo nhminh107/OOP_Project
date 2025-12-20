@@ -53,6 +53,8 @@ using namespace Gdiplus;
 #include "FileExplorer.h"
 #include "WindowApp.h"
 #include "Gradient.h"
+#include "LinearGradient.h"
+#include "RadialGradient.h"
 
 #define Pi 3.14159265358979323846
 #define Kappa 0.551915024494

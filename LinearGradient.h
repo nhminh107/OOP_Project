@@ -2,7 +2,7 @@
 #define _LINEARGRADIENT_H_
 #include"Library.h"
 
-class linearGradient {
+class linearGradient : public gradient{
 private:
 	point A, B;
 public:
