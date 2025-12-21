@@ -7,14 +7,25 @@ private:
 	float cx, cy, r, fx, fy;
 	bool isLink;
 public:
-	radialGradient() : cx(0.5), cy(0.5), r(0.5), fx(0.5), fy(0.5), isLink(false) {}
+	radialGradient();
+	radialGradient(const radialGradient&);
+	radialGradient& operator=(const radialGradient&);
 
-	// Setter helper
-	void setCX(float v) { cx = v; }
-	void setCY(float v) { cy = v; }
-	void setR(float v) { r = v; }
-	void setFX(float v) { fx = v; }
-	void setFY(float v) { fy = v; }
+	float getCx() const;
+	float getCy() const;
+	float getR() const;
+	float getFx() const;
+	float getFy() const;
+	bool getIsLink() const;
+
+	void setCX(float);
+	void setCY(float);
+	void setR(float);
+	void setFX(float);
+	void setFY(float);
+	void setIsLink(bool);
+
+	void updateElement() override;
 };
 
 #endif
