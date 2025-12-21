@@ -158,19 +158,38 @@ void parser::processProperty(string name, string property, string textName, Shap
 		if (attribute == "transform")
 			strTransform += (" " + value + " ");
 	}
+	// Kiểm tra nếu fill có dạng "url(#...)"
+	if (fill.find("url") != string::npos) {
+		size_t start = fill.find("#");
+		size_t end = fill.find(")");
+		if (start != string::npos) {
+			string idStr = (end != string::npos) ? fill.substr(start + 1, end - start - 1) : fill.substr(start + 1);
 
-	// --- LOGIC MỚI: CHỈ XỬ LÝ MÀU ĐƠN SẮC ---
-	// 1. Xử lý màu Fill
-	color clr = { 0, 0, 0, 1 };
-	if (fill == "none" || fill == "transparent" || fill == "") {
-		// Nếu không có fill hoặc fill=none thì coi như trong suốt
-		// Lưu ý: Nếu fill là url(#...) thì processColor sẽ trả về {0,0,0,0} nhờ đoạn check tôi thêm ở trên
-		processColor(fill, "0", clr);
+			// Lưu ID vào Shape (theo cấu trúc Shape.h của bạn)
+			shape->setFillGradientID(idStr);
+
+			// Kiểm tra ID có tồn tại trong map không để đánh dấu
+			if (gradientMap.find(idStr) != gradientMap.end()) {
+				
+			}
+		}
+		shape->setColor({ 0, 0, 0, 0 }); // Màu base trong suốt
 	}
 	else {
-		processColor(fill, fillOpa, clr);
+		// 1. Xử lý màu Fill
+		color clr = { 0, 0, 0, 1 };
+		if (fill == "none" || fill == "transparent" || fill == "") {
+			// Nếu không có fill hoặc fill=none thì coi như trong suốt
+			
+			processColor(fill, "0", clr);
+		}
+		else {
+			processColor(fill, fillOpa, clr);
+		}
+		shape->setColor(clr);
 	}
-	shape->setColor(clr);
+	// --- LOGIC MỚI: CHỈ XỬ LÝ MÀU ĐƠN SẮC ---
+	
 
 	// 2. Xử lý Stroke (Viền)
 	stroke strk;
@@ -209,6 +228,9 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 
 	SVGGroup* curGroup = root;
 
+	gradient* curGradient = NULL;
+	bool inDefs = false;
+
 	// Reset ViewBox
 	vb.setPortWidth(0); vb.setPortHeight(0);
 	float viewX = 0, viewY = 0, viewWidth = 0, viewHeight = 0, portWidth = 0, portHeight = 0;
@@ -231,7 +253,103 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 			}
 		}
 
-		// Xử lý thẻ <svg> (Header)
+		if (!name.empty() && name[0] == '<') name.erase(0, 1);
+
+		// 1. Quản lý thẻ <defs>
+		if (name == "defs") { inDefs = true; continue; }
+		if (name == "/defs") { inDefs = false; continue; }
+
+		// 2. Xử lý thẻ mở Gradient
+		if (name == "linearGradient" || name == "radialGradient") {
+			if (name == "linearGradient") curGradient = new linearGradient();
+			else curGradient = new radialGradient();
+
+			stringstream ss(property);
+			string attr, val, temp;
+			while (ss >> attr) {
+				getline(ss, temp, '"');
+				getline(ss, val, '"');
+
+				if (attr == "id") curGradient->setGradID(val);
+
+				if (name == "linearGradient") {
+					linearGradient* lg = (linearGradient*)curGradient;
+					// Gán vào biến A, B của struct LinearGradient
+					if (attr == "x1") lg->setX1(stof(val)); 
+					if (attr == "y1") lg->setY1(stof(val));
+					if (attr == "x2") lg->setX2(stof(val)); 
+					if (attr == "y2") lg->setY2(stof(val)); 
+				}
+				else {
+					radialGradient* rg = (radialGradient*)curGradient;
+					// Gán vào biến cx, cy, r... của struct RadialGradient
+					if (attr == "cx") rg->setCX(stof(val));
+					if (attr == "cy") rg->setCY(stof(val));
+					if (attr == "r")  rg->setR(stof(val));
+					if (attr == "fx") rg->setFX(stof(val));
+					if (attr == "fy") rg->setFY(stof(val));
+				}
+			}
+		}
+
+		// 3. Xử lý thẻ <stop>
+		else if (name == "stop" && curGradient != NULL) {
+			stringstream ss(property);
+			string attr, val, temp;
+			float offset = 0;
+			string stopColorStr = "black";
+			string stopOpacityStr = "1"; // Mặc định opacity là 1
+
+			while (ss >> attr) {
+				getline(ss, temp, '"');
+				getline(ss, val, '"');
+
+				if (attr == "offset") {
+					if (!val.empty() && val.back() == '%') {
+						val.pop_back();
+						offset = stof(val) / 100.0f;
+					}
+					else {
+						offset = stof(val);
+					}
+				}
+				if (attr == "stop-color") stopColorStr = val;
+				if (attr == "stop-opacity") stopOpacityStr = val;
+
+				// Xử lý trường hợp style="stop-color:..."
+				if (attr == "style") {
+					if (val.find("stop-color") != string::npos) {
+						size_t pos = val.find("stop-color");
+						size_t start = val.find(":", pos) + 1;
+						size_t end = val.find(";", pos);
+						if (end == string::npos) end = val.length();
+						stopColorStr = val.substr(start, end - start);
+					}
+					// Kiểm tra thêm stop-opacity trong style nếu cần
+					if (val.find("stop-opacity") != string::npos) {
+						size_t pos = val.find("stop-opacity");
+						size_t start = val.find(":", pos) + 1;
+						size_t end = val.find(";", pos);
+						if (end == string::npos) end = val.length();
+						stopOpacityStr = val.substr(start, end - start);
+					}
+				}
+			}
+
+			color c;
+			
+			processColor(stopColorStr, "1", c);
+			c.opacity = stof(stopOpacityStr);
+
+			curGradient->addStop(stop(offset, c));
+		}
+
+		else if ((name == "/linearGradient" || name == "/radialGradient") && curGradient) {
+			if (!curGradient->getGradID().empty()) {
+				gradientMap[curGradient->getGradID()] = curGradient;
+			}
+			curGradient = NULL;
+		}
 		if (name == "<svg") {
 			stringstream sss(property);
 			string attribute, temp, val;

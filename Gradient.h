@@ -18,16 +18,16 @@ protected:
 	vector<stop> stopArr;
 	vector<pair<string, vector<float>>> gradTrans;
 	string lineData;
-	int gradID;
+	string gradID;
 public:
 	vector<stop> getStopArr();
 	vector<pair<string, vector<float>>> getGradTrans();
 	string getLineData();
-	int getGradID();
+	string getGradID();
 
 	void setStopArr(vector<stop>);
 	void setLineData(string);
-	void setGradID(int);
+	void setGradID(string);
 
 	void addStop(stop s);
 	void addGradTrans(string);

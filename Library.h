@@ -1,4 +1,4 @@
-﻿#ifndef _LIBRARY_H_
+#ifndef _LIBRARY_H_
 #define _LIBRARY_H_
 
 #include <iostream>
@@ -24,6 +24,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include<map>
 using namespace std;
 using namespace rapidxml;
 using namespace Gdiplus;
