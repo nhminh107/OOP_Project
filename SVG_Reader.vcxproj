@@ -134,6 +134,7 @@
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="LinearGradient.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="Circle.cpp" />
