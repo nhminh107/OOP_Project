@@ -2,7 +2,7 @@
 #define _POINT_H_
 
 class point {
-private:
+public:
 	float x, y;
 	bool intersect;
 
