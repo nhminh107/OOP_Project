@@ -11,7 +11,7 @@ protected:
 
 public:
     Shape();
-    virtual ~Shape();
+    virtual ~Shape();    
     virtual void updateProperty();
 
     string getName();

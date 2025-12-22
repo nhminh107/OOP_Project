@@ -12,7 +12,7 @@ void parser::loadColorMap() {
 	string color_line = "";
 	while (getline(color_file, color_line)) {
 		stringstream ss(color_line);
-		string token = "";
+		string token = "";	
 		vector<string> vct;
 
 		while (ss >> token)

@@ -130,9 +130,11 @@
   <ItemGroup>
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="FileExplorer.cpp" />
+    <ClCompile Include="Gradient.cpp" />
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="LinearGradient.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="Circle.cpp" />
@@ -142,6 +144,7 @@
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Polyline.cpp" />
+    <ClCompile Include="RadialGradient.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Shape.cpp" />
@@ -154,9 +157,11 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="FileExplorer.h" />
+    <ClInclude Include="Gradient.h" />
     <ClInclude Include="Group.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Line.h" />
+    <ClInclude Include="LinearGradient.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Circle.h" />
@@ -165,6 +170,7 @@
     <ClInclude Include="Point.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="Polyline.h" />
+    <ClInclude Include="RadialGradient.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Shape.h" />
