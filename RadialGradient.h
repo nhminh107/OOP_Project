@@ -14,7 +14,7 @@ public:
 	void setFocal(float x1, float x2); 
 	void setCenter(float x, float y); 
 	void setRadius(float r); 
-	virtual GradientType getType() const = 0;
+	GradientType getType() const;
 	Gdiplus::Brush* createBrush(const Gdiplus::RectF& shapeBound, float opacity) override;
 };
 #endif // !RADIALGRADIENT_H

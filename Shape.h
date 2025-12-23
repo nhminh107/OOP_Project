@@ -1,4 +1,4 @@
-#ifndef _SHAPE_H_
+﻿#ifndef _SHAPE_H_
 #define _SHAPE_H_
 
 class Shape {
@@ -8,6 +8,9 @@ protected:
     bool isSelected;
     stroke strk;
     color fill;
+
+    string fillGradientID; // Thêm cái này
+    bool hasGradient;      // Để biết lúc vẽ thì dùng Brush hay dùng Color
 
 public:
     Shape();
@@ -23,6 +26,8 @@ public:
     void setTextName(string);
     void setLine(string);
     void setStroke(stroke);
+    void setHasGradient(bool); 
+    void setGradientID(const string&); 
     void setSelected(bool s) { isSelected = s;  }
     void setColor(color);
     void updateTransformVct(string);

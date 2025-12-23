@@ -84,6 +84,74 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 	}
 }
 
+// Hàm bổ trợ để lấy giá trị giữa cặp dấu ngoặc kép ""
+string getVal(string attrName, string property) {
+	size_t pos = property.find(attrName + "=");
+	if (pos == string::npos) return "";
+	size_t start = property.find_first_of("\"'", pos);
+	size_t end = property.find_first_of("\"'", start + 1);
+	return property.substr(start + 1, end - start - 1);
+
+	//Sai thì phải kiểm tra hàm này, vì đây là hàm cốt lõi để tách chuỗi 
+}
+
+float parser::parseUnit(string s) {
+	if (s.empty()) return 0.0f;
+
+	// Loại bỏ khoảng trắng thừa nếu có
+	size_t first = s.find_first_not_of(" ");
+	size_t last = s.find_last_not_of(" ");
+	s = s.substr(first, (last - first + 1));
+
+	bool isPercent = (s.back() == '%');
+	if (isPercent) {
+		s.pop_back(); // Bỏ ký tự % để stof hoạt động
+	}
+
+	try {
+		float val = stof(s);
+		return isPercent ? (val / 100.0f) : val;
+	}
+	catch (...) {
+		return 0.0f; // Trả về 0 nếu chuỗi không phải là số hợp lệ
+	}
+}
+
+void parser::parseGradient(string name, string property) {
+	Gradient* gradient = nullptr;
+
+	if (name.find("linearGradient") != string::npos) {
+		LinearGradient* linear = new LinearGradient();
+		// Giả sử bạn xử lý tọa độ %, x1="20%" -> 0.2f
+		string x1 = getVal("x1", property);
+		string y1 = getVal("y1", property);
+		string x2 = getVal("x2", property); 
+		string y2 = getVal("y2", property); 
+
+		linear->setStart(parseUnit(x1), parseUnit(y1)); 
+		linear->setEnd(parseUnit(x2), parseUnit(y2));
+		gradient = linear;
+	}
+	else if (name.find("radialGradient") != string::npos) {
+		RadialGradient* radial = new RadialGradient();
+		radial->setCenter(parseUnit(getVal("cx", property)), parseUnit(getVal("cy", property)));
+		radial->setRadius(parseUnit(getVal("r", property)));
+		gradient = radial;
+	}
+
+	if (gradient) {
+		gradient->setID(getVal("id", property));
+		string transStr = getVal("gradientTransform", property);
+		if (!transStr.empty()) {
+			gradient->updateTransform(transStr); // Gọi hàm vừa tạo
+		}
+
+		this->currentProcessingGradient = gradient;
+		gradientMap[gradient->getID()] = gradient;
+	}
+}
+
+
 // --- HÀM XỬ LÝ THUỘC TÍNH (ĐÃ BỎ LOGIC GRADIENT) ---
 void parser::processProperty(string name, string property, string textName, Shape*& shape) {
 	shape->setName(name);
@@ -161,16 +229,33 @@ void parser::processProperty(string name, string property, string textName, Shap
 
 	// --- LOGIC MỚI: CHỈ XỬ LÝ MÀU ĐƠN SẮC ---
 	// 1. Xử lý màu Fill
-	color clr = { 0, 0, 0, 1 };
-	if (fill == "none" || fill == "transparent" || fill == "") {
-		// Nếu không có fill hoặc fill=none thì coi như trong suốt
-		// Lưu ý: Nếu fill là url(#...) thì processColor sẽ trả về {0,0,0,0} nhờ đoạn check tôi thêm ở trên
-		processColor(fill, "0", clr);
+	if (fill.find("url(#") != string::npos) {
+		// TRƯỜNG HỢP: GRADIENT
+		size_t start = fill.find("#") + 1;
+		size_t end = fill.find(")");
+		string id = fill.substr(start, end - start);
+
+		shape->setGradientID(id);
+		shape->setHasGradient(true);
+
+		// set một màu mặc định để an toàn
+		color transparent = { 0, 0, 0, 0 };
+		shape->setColor(transparent);
 	}
 	else {
-		processColor(fill, fillOpa, clr);
+		// TRƯỜNG HỢP: MÀU ĐƠN SẮC (SOLID COLOR)
+		shape->setHasGradient(false);
+		shape->setGradientID(""); // Reset ID
+
+		color clrFill = { 0, 0, 0, 1 };
+		if (fill == "none" || fill == "transparent" || fill == "") {
+			processColor("none", "0", clrFill);
+		}
+		else {
+			processColor(fill, fillOpa, clrFill);
+		}
+		shape->setColor(clrFill);
 	}
-	shape->setColor(clr);
 
 	// 2. Xử lý Stroke (Viền)
 	stroke strk;
@@ -267,7 +352,27 @@ void parser::parseItem(SVGGroup* root, string fileName, viewbox& vb) {
 				}
 			}
 		}
+		if (name == "<linearGradient" || name == "<radialGradient") {
+			// 1. Tạo đối tượng và parse các thuộc tính (id, x1, y1, cx, cy, r...)
+			parseGradient(name, property);
+		}
+		else if (name == "<stop") {
+			// 2. Nếu đang nằm trong một cụm Gradient, thì thêm stop vào
+			if (this->currentProcessingGradient != nullptr) {
+				float offset = parseUnit(getVal("offset", property));
+				string stopColorStr = getVal("stop-color", property);
+				string stopOpacity = getVal("stop-opacity", property);
+				if (stopOpacity.empty()) stopOpacity = "1";
 
+				color c;
+				processColor(stopColorStr, stopOpacity, c);
+				this->currentProcessingGradient->addStop(offset, c);
+			}
+		}
+		else if (name == "</linearGradient>" || name == "</radialGradient>") {
+			// 3. Kết thúc cụm Gradient, reset biến tạm
+			this->currentProcessingGradient = nullptr;
+		}
 		// Xử lý thẻ Group <g>
 		if (name.find("<g") != string::npos) {
 			property = " " + groupStack.top() + " " + property + " ";

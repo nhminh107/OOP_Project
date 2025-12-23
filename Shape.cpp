@@ -2,6 +2,7 @@
 Shape::Shape() {
 	text_name = "", line_str = "", shape = "";
 	isSelected = false;
+	hasGradient = false; 
 }
 
 void Shape::updateProperty() {}
@@ -45,7 +46,6 @@ stroke Shape::getStroke() {
 color Shape::getColor() {
 	return this->fill;
 }
-
 void Shape::updateTransformVct(string str) {
 	string token = "";
 	stringstream ss(str);
@@ -122,6 +122,14 @@ void Shape::updateTransformVct(string str) {
 }
 vector<pair<string, vector<float>>> Shape::getTransVct() {
 	return this->transVct;
+}
+
+void Shape::setHasGradient(bool status) {
+	this->hasGradient = status; 
+}
+
+void Shape::setGradientID(const string& a) {
+	this->fillGradientID = a; 
 }
 
 void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {

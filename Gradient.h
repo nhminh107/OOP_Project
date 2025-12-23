@@ -2,8 +2,8 @@
 #define GRADIENT_H
 
 struct stop {
-	float offset; 
-	color stopColor;  
+	float offset;
+	color stopColor;
 };
 
 enum GradientType {
@@ -19,7 +19,7 @@ class Gradient {
 protected: 
 	vector<stop> stopList;
 	string id; 
-	Matrix transformMatrix; 
+	vector<pair<string, vector<float>>> transVct;
 	GradientUnits units;
 	WrapMode spreadMethod; 
 public: 
@@ -31,11 +31,16 @@ public:
 	virtual GradientType getType() const = 0; 
 	void addStop(float offset, color c); 
 	virtual Gdiplus::Brush* createBrush(const Gdiplus::RectF& shapeBound, float opacity) = 0; 
-
+	void updateTransform(string str); 
+	void getTransformMatrix(Matrix* matrix); // (1) 
 	/*Hàm creatBrush: 
 	Mỗi hình có thể có fill-opacity riêng, mỗi stop cũng có opacity riêng. Khi Brush thì phải lwaays Opacity từng stop nhân với tổng thể của Shape
 	để ra màu sắc cuối cùng trên màn hình
 	
-	Trong Shape sẽ dùng getBoundingBox() xong truyền vào đây */
+	Trong Shape sẽ dùng getBoundingBox() xong truyền vào đây 
+	LƯU Ý LÀ PHẢI CÓ setTransform nữa, tao cài đặt ở hàm (1) rồi. Cứ tạo 1 cái Matrix, mat xong truyền vào là được*/
 };
+
+extern unordered_map <string, Gradient*> gradientMap;
+/*MAP này lưu theo ID & Gradient. */
 #endif // ! GRADIENT_H

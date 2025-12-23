@@ -1,5 +1,6 @@
 #include "Library.h"
 
+unordered_map <string, Gradient*> gradientMap = {}; 
 void image::parseImage(parser parse, viewbox& vb) {
 	root = new SVGGroup();
 	parse.parseItem(root, fileName, vb);
