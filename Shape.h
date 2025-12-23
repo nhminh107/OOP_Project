@@ -30,6 +30,7 @@ public:
     void setGradientID(const string&); 
     void setSelected(bool s) { isSelected = s;  }
     void setColor(color);
+    /*Hai hàm updateTransformVct và getTrans... đã đúng rồi vì nó copy logic từ Shape qua. Khi fix bug thì fix hàm này sau cùng*/
     void updateTransformVct(string);
     void getTransformMatrix(Gdiplus::Matrix* matrix);
     virtual RectF getBoundingBox() = 0; 
