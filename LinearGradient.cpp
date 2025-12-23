@@ -18,6 +18,11 @@ void LinearGradient::setEnd(float x, float y) {
 	end.y = y;
 }
 
+GradientType LinearGradient::getType() const {
+	return LINEAR; 
+}
+
+
 Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opacity) {
 
 	Gdiplus::PointF pStart(

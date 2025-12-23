@@ -46,16 +46,16 @@ using namespace Gdiplus;
 #include "Path.h"
 #include "Text.h"
 #include "Group.h" 
-
+#include "Gradient.h"
+#include "LinearGradient.h"
+#include "RadialGradient.h"
 #include "ShapeFactory.h"
 #include "Render.h" 
 #include "Parser.h"
 #include "Image.h"
 #include "FileExplorer.h"
 #include "WindowApp.h"
-#include "Gradient.h"
-#include "LinearGradient.h"
-#include "RadialGradient.h"
+
 #define Pi 3.14159265358979323846
 #define Kappa 0.551915024494
 #define Pakka 1.5707963267948966

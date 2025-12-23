@@ -39,6 +39,10 @@ Brush* RadialGradient::createBrush(const Gdiplus::RectF& shapeBound, float opaci
     return brush;
 }
 
+GradientType RadialGradient::getType() const {
+    return RADIAL;
+}
+
 RadialGradient::RadialGradient() {
 	center.x = 0.5f; 
 	center.y = 0.5f; // Mặc định ở giữa
