@@ -21,6 +21,7 @@ public:
     string getTextName();
     stroke getStroke();
     color getColor();
+    string getFillGradientID();
     vector<pair<string, vector<float>>> getTransVct();
     void setName(string);
     void setTextName(string);

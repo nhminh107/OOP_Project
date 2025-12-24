@@ -11,6 +11,10 @@ string Shape::getName() {
 	return this->shape;
 }
 
+string Shape::getFillGradientID()
+{
+	return this->fillGradientID;
+}
 
 void Shape::setName(string s) {
 	this->shape = s;

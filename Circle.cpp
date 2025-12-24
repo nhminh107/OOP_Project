@@ -58,20 +58,14 @@ void SVGCircle::draw(Graphics& graphics) {
     // 1. Lưu trạng thái Graphics
     GraphicsState save = graphics.Save();
 
-    // 2. Tạo bút vẽ (Pen) - Lấy từ dữ liệu của chính mình (this)
+    // 2. Tạo bút vẽ (Pen) cho viền
     Pen penCircle(Color(this->getStroke().getStrokeColor().opacity * 255,
         this->getStroke().getStrokeColor().r,
         this->getStroke().getStrokeColor().g,
         this->getStroke().getStrokeColor().b),
         this->getStroke().getStrokeWidth());
 
-    // 3. Tạo cọ tô màu (Brush)
-    SolidBrush fillCircle(Color(this->getColor().opacity * 255,
-        this->getColor().r,
-        this->getColor().g,
-        this->getColor().b));
-
-    // 4. Xử lý Transform
+    // 3. Xử lý Transform
     vector<pair<string, vector<float>>> transVct = this->getTransVct();
     for (auto trans : transVct) {
         float x = 0.0f;
@@ -85,7 +79,7 @@ void SVGCircle::draw(Graphics& graphics) {
             graphics.RotateTransform(x);
         else if (trans.first == "scale")
             graphics.ScaleTransform(x, y);
-        else if (trans.first == "matrix") { // Bổ sung cho đủ bộ
+        else if (trans.first == "matrix") {
             if (trans.second.size() >= 6) {
                 Matrix matrix(trans.second[0], trans.second[1], trans.second[2],
                     trans.second[3], trans.second[4], trans.second[5]);
@@ -94,18 +88,50 @@ void SVGCircle::draw(Graphics& graphics) {
         }
     }
 
-    // 5. Tính toán tọa độ vẽ
+    // 4. Tính toán tọa độ và kích thước
     graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 
-    float r = this->getRadius(); // Lấy bán kính
-    float d = 2.0f * r;          // Đường kính
-
-    // GDI+ vẽ Ellipse từ góc trên-trái, nên phải trừ đi bán kính từ tâm
+    float r = this->getRadius();
+    float d = 2.0f * r;
     float x_pos = this->getCenter().getX() - r;
     float y_pos = this->getCenter().getY() - r;
 
+    // 5. Tạo Brush (Gradient hoặc Solid Color)
+    Brush* fillBrush = nullptr;
+
+    if (this->hasGradient) {
+        // TRƯỜNG HỢP SỬ DỤNG GRADIENT
+        string gradientID = this->getFillGradientID();
+
+        // Tìm gradient trong map
+        if (gradientMap.find(gradientID) != gradientMap.end()) {
+            Gradient* gradient = gradientMap[gradientID];
+
+            // Lấy bounding box của hình để truyền vào createBrush
+            RectF boundingBox = this->getBoundingBox();
+
+            // Tạo brush từ gradient với opacity của shape
+            fillBrush = gradient->createBrush(boundingBox, this->getColor().opacity);
+        }
+        else {
+            // Gradient không tìm thấy -> dùng màu mặc định (đen trong suốt)
+            fillBrush = new SolidBrush(Color(0, 0, 0, 0));
+        }
+    }
+    else {
+        // TRƯỜNG HỢP SỬ DỤNG MÀU ĐƠN SẮC
+        fillBrush = new SolidBrush(Color(this->getColor().opacity * 255,
+            this->getColor().r,
+            this->getColor().g,
+            this->getColor().b));
+    }
+
     // 6. Vẽ và Tô màu
-    graphics.FillEllipse(&fillCircle, x_pos, y_pos, d, d);
+    if (fillBrush != nullptr) {
+        graphics.FillEllipse(fillBrush, x_pos, y_pos, d, d);
+        delete fillBrush;
+    }
+
     graphics.DrawEllipse(&penCircle, x_pos, y_pos, d, d);
 
     // 7. Khôi phục trạng thái
