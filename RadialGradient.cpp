@@ -24,10 +24,12 @@ Brush* RadialGradient::createBrush(const Gdiplus::RectF& shapeBound, float opaci
         vector<float> offsets(count); 
         // Lưu ý: GDI+ PathGradientBrush tính offset từ viền (0.0) vào tâm (1.0)
         for (int i = 0; i < count; i++) {
-            int idx = count - 1 - i;
-            int a = (int)(stopList[i].stopColor.opacity * opacity * 255);
-            colors[i] = Gdiplus::Color(a, stopList[idx].stopColor.r, stopList[idx].stopColor.g, stopList[idx].stopColor.b);
-            offsets[i] = 1.0f - stopList[idx].offset;
+            int idx = count - 1 - i; // Lấy màu từ cuối StopList (SVG viền) đưa lên đầu (GDI+ viền)
+            int a = (int)(stopList[idx].stopColor.opacity * opacity * 255);
+            colors[i] = Gdiplus::Color(a, stopList[idx].stopColor.r,
+                stopList[idx].stopColor.g,
+                stopList[idx].stopColor.b);
+            offsets[i] = 1.0f - stopList[idx].offset; // Chuyển 1.0 (SVG viền) thành 0.0 (GDI+ viền)
         }
         brush->SetInterpolationColors(colors.data(), offsets.data(), count);
     }
@@ -35,7 +37,7 @@ Brush* RadialGradient::createBrush(const Gdiplus::RectF& shapeBound, float opaci
     Gdiplus::Matrix mat;
     this->getTransformMatrix(&mat);
     brush->SetTransform(&mat);
-
+    
     return brush;
 }
 
@@ -47,7 +49,7 @@ RadialGradient::RadialGradient() {
 	center.x = 0.5f; 
 	center.y = 0.5f; // Mặc định ở giữa
     radius = 0.5f;
-	focalPoint.x, focalPoint.y = 0.5f, 0.5f; // Mặc định trùng tâm
+    focalPoint.x = 0.5f; focalPoint.y = 0.5f;
 }
 void RadialGradient::setCenter(float x, float y) { center.x = x; center.y = y; }
 void RadialGradient::setRadius(float r) { radius = r; }

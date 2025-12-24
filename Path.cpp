@@ -503,6 +503,7 @@ RectF SVGPath::getBoundingBox() {
 void SVGPath::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
+	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	FillMode mode;
 	if (this->fillRule == "evenodd")
@@ -631,8 +632,23 @@ void SVGPath::draw(Graphics& graphics) {
 		}
 	}
 
-	// 4. Thiết lập chế độ vẽ mượt
-	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
+	//3 Chuẩn bị Brush 
+	Brush* fillBrush = nullptr;
+
+	if (this->hasGradient) {
+		string id = this->getFillGradientID(); 
+
+		if (gradientMap.find(id) != gradientMap.end()) {
+			RectF bound = this->getBoundingBox(); 
+
+			fillBrush = gradientMap[id]->createBrush(bound, this->getColor().opacity); //Tại sao color opactity lại gán cho fillbrush ?
+		}
+	}
+
+	if (fillBrush == nullptr) { //Ko có gradient hoặc id ko hợp lệ 
+		fillBrush = new SolidBrush(Color(this->getColor().opacity * 255,
+			this->getColor().r, this->getColor().g, this->getColor().b));
+	}
 
 	// 5. Chuẩn bị bút vẽ (Pen) và màu tô (Brush) - Lấy từ class cha Shape
 	// Sử dụng this->getStroke() và this->getColor()
@@ -642,10 +658,10 @@ void SVGPath::draw(Graphics& graphics) {
 		this->getStroke().getStrokeColor().b),
 		this->getStroke().getStrokeWidth());
 
-	SolidBrush fillPath(Color(this->getColor().opacity * 255,
+	/*SolidBrush fillPath(Color(this->getColor().opacity * 255,
 		this->getColor().r,
 		this->getColor().g,
-		this->getColor().b));
+		this->getColor().b));*/
 
 	// 6. Xử lý Transform (Dịch chuyển, Xoay, Scale)
 	// Lấy vector transform từ class cha Shape
@@ -671,10 +687,11 @@ void SVGPath::draw(Graphics& graphics) {
 	}
 
 	// 7. Vẽ và Tô màu
-	graphics.FillPath(&fillPath, &graphicsPath);
+	graphics.FillPath(fillBrush, &graphicsPath);
 	graphics.DrawPath(&penPath, &graphicsPath);
 
 	// 8. Khôi phục trạng thái
+	delete fillBrush; 
 	graphics.Restore(save);
 }
 

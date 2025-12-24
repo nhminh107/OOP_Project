@@ -25,14 +25,24 @@ GradientType LinearGradient::getType() const {
 
 Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opacity) {
 
-	Gdiplus::PointF pStart(
-		shapeBound.X + this->start.x * shapeBound.Width,
-		shapeBound.Y + this->start.y * shapeBound.Height
-	);
+	Matrix mat;
+	this->getTransformMatrix(&mat);
 
+
+	// Biến đổi các điểm normalized [0,1] trước
+	Gdiplus::PointF pStartNorm(this->start.x, this->start.y);
+	Gdiplus::PointF pEndNorm(this->end.x, this->end.y);
+	mat.TransformPoints(&pStartNorm);
+	mat.TransformPoints(&pEndNorm);
+
+	// Sau đó mới map vào shapeBound tuyệt đối
+	Gdiplus::PointF pStart(
+		shapeBound.X + pStartNorm.X * shapeBound.Width,
+		shapeBound.Y + pStartNorm.Y * shapeBound.Height
+	);
 	Gdiplus::PointF pEnd(
-		shapeBound.X + this->end.x * shapeBound.Width,
-		shapeBound.Y + this->end.y * shapeBound.Height
+		shapeBound.X + pEndNorm.X * shapeBound.Width,
+		shapeBound.Y + pEndNorm.Y * shapeBound.Height
 	);
 
 	if (abs(pStart.X - pEnd.X) < 0.001f && abs(pStart.Y - pEnd.Y) < 0.001f) {
@@ -58,10 +68,6 @@ Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opaci
 		// Truyền con trỏ từ vector bằng hàm .data()
 		brush->SetInterpolationColors(colors.data(), offsets.data(), count);
 	}
-
-	Matrix mat; 
-	this->getTransformMatrix(&mat); 
-	brush->SetTransform(&mat);  
 
 	return brush; 
 }

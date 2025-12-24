@@ -20,6 +20,7 @@ public:
     string getName();
     string getTextName();
     stroke getStroke();
+    string getFillGradientID(); 
     color getColor();
     vector<pair<string, vector<float>>> getTransVct();
     void setName(string);

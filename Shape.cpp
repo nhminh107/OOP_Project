@@ -132,6 +132,9 @@ void Shape::setGradientID(const string& a) {
 	this->fillGradientID = a; 
 }
 
+string Shape::getFillGradientID() {
+	return this->fillGradientID;
+}
 void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {
 	matrix->Reset();
 

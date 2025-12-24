@@ -86,13 +86,21 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 
 // Hàm bổ trợ để lấy giá trị giữa cặp dấu ngoặc kép ""
 string getVal(string attrName, string property) {
-	size_t pos = property.find(attrName + "=");
-	if (pos == string::npos) return "";
-	size_t start = property.find_first_of("\"'", pos);
-	size_t end = property.find_first_of("\"'", start + 1);
-	return property.substr(start + 1, end - start - 1);
+	stringstream sss(property);
+	string attr, temp, value;
 
-	//Sai thì phải kiểm tra hàm này, vì đây là hàm cốt lõi để tách chuỗi 
+	// Duyệt qua luồng để tìm đúng tên thuộc tính
+	while (sss >> attr) {
+		// Đọc đến dấu ngoặc kép đầu tiên (bỏ qua khoảng trắng dư thừa)
+		getline(sss, temp, '"');
+		// Đọc đến dấu ngoặc kép thứ hai để lấy giá trị thực sự
+		getline(sss, value, '"');
+
+		if (attr == attrName) {
+			return value;
+		}
+	}
+	return "";
 }
 
 float parser::parseUnit(string s) {
@@ -134,8 +142,18 @@ void parser::parseGradient(string name, string property) {
 	}
 	else if (name.find("radialGradient") != string::npos) {
 		RadialGradient* radial = new RadialGradient();
-		radial->setCenter(parseUnit(getVal("cx", property)), parseUnit(getVal("cy", property)));
-		radial->setRadius(parseUnit(getVal("r", property)));
+		float cx = parseUnit(getVal("cx", property));
+		float cy = parseUnit(getVal("cy", property));
+		float r = parseUnit(getVal("r", property));
+
+		string fxStr = getVal("fx", property);
+		string fyStr = getVal("fy", property);
+		float fx = fxStr.empty() ? cx : parseUnit(fxStr);
+		float fy = fyStr.empty() ? cy : parseUnit(fyStr);
+
+		radial->setCenter(cx, cy);
+		radial->setRadius(r);
+		radial->setFocal(fx, fy);
 		gradient = radial;
 	}
 
@@ -239,8 +257,7 @@ void parser::processProperty(string name, string property, string textName, Shap
 		shape->setHasGradient(true);
 
 		// set một màu mặc định để an toàn
-		color transparent = { 0, 0, 0, 0 };
-		shape->setColor(transparent);
+		shape->setColor({ 0,0,0, stof(fillOpa.empty() ? "1" : fillOpa) });
 	}
 	else {
 		// TRƯỜNG HỢP: MÀU ĐƠN SẮC (SOLID COLOR)
