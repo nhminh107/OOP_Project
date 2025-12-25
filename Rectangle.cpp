@@ -45,6 +45,38 @@ void SVGRectangle::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
 
+	//Chuẩn bị Brush
+	Brush* fillBrush = nullptr;
+	RectF bound = this->getBoundingBox();
+
+	if (this->hasGradient) {
+		string id = this->getFillGradientID();
+		if (gradientMap.count(id)) {
+			Gradient* grad = gradientMap[id];
+
+			vector<stop> stops = grad->getStopList();
+			if (!stops.empty()) {
+				color lastC = stops.back().stopColor;
+				Color padColor(lastC.opacity * this->getColor().opacity * 255, lastC.r, lastC.g, lastC.b);
+
+				SolidBrush padBrush(padColor);
+				graphics.FillRectangle(&padBrush, bound); 
+			}
+
+			
+			fillBrush = grad->createBrush(bound, this->getColor().opacity);
+
+			graphics.FillRectangle(fillBrush, bound);
+		}
+	}
+
+	//(Không có gradient)
+	if (fillBrush == nullptr) {
+		fillBrush = new SolidBrush(Color(this->getColor().opacity * 255,
+			this->getColor().r, this->getColor().g, this->getColor().b));
+		graphics.FillRectangle(fillBrush, bound);
+	}
+
 	// 2. Tạo bút vẽ (Pen) cho viền
 	Pen penRectangle(Color(this->getStroke().getStrokeColor().opacity * 255,
 		this->getStroke().getStrokeColor().r,
@@ -53,10 +85,10 @@ void SVGRectangle::draw(Graphics& graphics) {
 		this->getStroke().getStrokeWidth());
 
 	// 3. Tạo cọ tô màu (Brush) cho phần nền
-	SolidBrush fillRectangle(Color(this->getColor().opacity * 255,
+	/*SolidBrush fillRectangle(Color(this->getColor().opacity * 255,
 		this->getColor().r,
 		this->getColor().g,
-		this->getColor().b));
+		this->getColor().b));*/
 
 	// 4. Xử lý các phép biến đổi (Translate, Rotate, Scale, Matrix)
 	vector<pair<string, vector<float>>> transVct = this->getTransVct();
@@ -88,10 +120,12 @@ void SVGRectangle::draw(Graphics& graphics) {
 	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 
 
-	graphics.FillRectangle(&fillRectangle, this->getRoot().getX(), this->getRoot().getY(), this->getWidth(), this->getHeight());
+	graphics.FillRectangle(fillBrush, this->getRoot().getX(), this->getRoot().getY(), this->getWidth(), this->getHeight());
 	graphics.DrawRectangle(&penRectangle, this->getRoot().getX(), this->getRoot().getY(), this->getWidth(), this->getHeight());
 
 	// 7. Khôi phục trạng thái
+	// Dọn dẹp
+	if (fillBrush) delete fillBrush;
 	graphics.Restore(save);
 }
 point SVGRectangle::getRoot() {
