@@ -15,6 +15,7 @@ public:
 	void parseGradient(string name, string property);
 	float parseUnit(string s); 
 	void parseItem(SVGGroup*, string, viewbox&);
+	void exportGradientLog();
 };
 
 #endif

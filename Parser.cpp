@@ -35,6 +35,60 @@ void parser::loadColorMap() {
 	colorMap["none"] = { 0, 0, 0, 0 };
 }
 
+
+void parser::exportGradientLog() {
+	// Tên file cố định, nằm riêng biệt với các file test SVG của bạn
+	string logName = "GRADIENT_REPORT_LOG.txt";
+	ofstream log(logName, ios::out);
+
+	if (!log.is_open()) return;
+
+	log << "================== SVG GRADIENT DATA REPORT ==================" << endl;
+	log << "Generated on: 2025-12-25" << endl;
+	log << "Total Gradients in Map: " << gradientMap.size() << endl;
+	log << "==============================================================" << endl << endl;
+
+	for (auto const& p : gradientMap) {
+		if (!p.second) continue;
+
+		log << ">>> GRADIENT ID: [" << p.first << "]" << endl;
+		log << "    Type: " << (p.second->getType() == 0 ? "LINEAR" : "RADIAL") << endl;
+
+		// 1. Kiểm tra Mapping Tọa độ (Logic [0,1] hay tuyệt đối)
+		if (p.second->getType() == 0) { // LINEAR
+			LinearGradient* l = (LinearGradient*)p.second;
+			log << "    - Start: (" << l->getStart().x << ", " << l->getStart().y << ")" << endl;
+			log << "    - End:   (" << l->getEnd().x << ", " << l->getEnd().y << ")" << endl;
+		}
+		else { // RADIAL
+			RadialGradient* r = (RadialGradient*)p.second;
+			log << "    - Center: (" << r->getCenter().x << ", " << r->getCenter().y << ")" << endl;
+			log << "    - Radius: " << r->getRadius() << endl;
+			log << "    - Focal:  (" << r->getFocal().x << ", " << r->getFocal().y << ")" << endl;
+		}
+
+		// 2. Kiểm tra Stop List (Xác nhận logic chèn biên 0.0/1.0)
+		vector<stop> stops = p.second->getStopList();
+		log << "    - Stops Count: " << stops.size() << endl;
+		for (size_t i = 0; i < stops.size(); i++) {
+			log << "      [" << i << "] Offset: " << fixed << setprecision(2) << stops[i].offset
+				<< " | Color: RGB(" << (int)stops[i].stopColor.r << ","
+				<< (int)stops[i].stopColor.g << "," << (int)stops[i].stopColor.b << ")"
+				<< " | Opacity: " << stops[i].stopColor.opacity << endl;
+		}
+
+		// 3. Kiểm tra Transform (Để xác nhận dải màu có bị xoay đúng hướng)
+		//log << "    - Has Transform: " << (p.second->hasTransform() ? "YES" : "NO") << endl;
+		log << "--------------------------------------------------------------" << endl;
+	}
+
+	log << "\n[HINT FOR DEBUG]:" << endl;
+	log << " - If Coords are 0.0 to 1.0: You are using 'objectBoundingBox' (Standard)." << endl;
+	log << " - If Coords are > 1.0: You are using 'userSpaceOnUse' (Like your friend)." << endl;
+	log << " - If First Offset != 0.0: Check createBrush() for boundary insertion logic." << endl;
+
+	log.close();
+}
 // --- HÀM XỬ LÝ MÀU ĐƠN SẮC (GIỮ NGUYÊN) ---
 void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 	// Xử lý trường hợp "url(#...)" còn sót lại (nếu có) -> coi như trong suốt
@@ -128,42 +182,46 @@ void parser::parseGradient(string name, string property) {
 
 	if (name.find("linearGradient") != string::npos) {
 		LinearGradient* linear = new LinearGradient();
-		// Giả sử bạn xử lý tọa độ %, x1="20%" -> 0.2f
-		string x1 = getVal("x1", property);
-		string y1 = getVal("y1", property);
-		string x2 = getVal("x2", property); 
-		string y2 = getVal("y2", property); 
-
-		linear->setStart(parseUnit(x1), parseUnit(y1)); 
-		linear->setEnd(parseUnit(x2), parseUnit(y2));
+		// LINEAR = x1, y1, x2, y2
+		linear->setStart(parseUnit(getVal("x1", property)), parseUnit(getVal("y1", property)));
+		linear->setEnd(parseUnit(getVal("x2", property)), parseUnit(getVal("y2", property)));
 		gradient = linear;
 	}
 	else if (name.find("radialGradient") != string::npos) {
 		RadialGradient* radial = new RadialGradient();
+		// RADIAL = cx, cy, r, fx, fy
 		float cx = parseUnit(getVal("cx", property));
 		float cy = parseUnit(getVal("cy", property));
 		float r = parseUnit(getVal("r", property));
+		radial->setCenter(cx, cy);
+		radial->setRadius(r);
 
 		string fxStr = getVal("fx", property);
 		string fyStr = getVal("fy", property);
-		float fx = fxStr.empty() ? cx : parseUnit(fxStr);
-		float fy = fyStr.empty() ? cy : parseUnit(fyStr);
-
-		radial->setCenter(cx, cy);
-		radial->setRadius(r);
-		radial->setFocal(fx, fy);
+		radial->setFocal(fxStr.empty() ? cx : parseUnit(fxStr),
+			fyStr.empty() ? cy : parseUnit(fyStr));
 		gradient = radial;
 	}
 
 	if (gradient) {
-		gradient->setID(getVal("id", property));
-		string transStr = getVal("gradientTransform", property);
-		if (!transStr.empty()) {
-			gradient->updateTransform(transStr); // Gọi hàm vừa tạo
+		string id = getVal("id", property);
+		gradient->setID(id);
+
+		// --- XỬ LÝ KẾ THỪA MÀU (xlink:href) ---
+		string href = getVal("xlink:href", property);
+		if (!href.empty()) {
+			// Loại bỏ dấu '#' ở đầu nếu có (ví dụ: "#grad1" -> "grad1")
+			string refID = (href[0] == '#') ? href.substr(1) : href;
+
+			// Kiểm tra xem ID gốc đã tồn tại trong Map chưa
+			if (gradientMap.count(refID)) {
+				Gradient* sourceGrad = gradientMap[refID];
+				gradient->setStopList(sourceGrad->getStopList());
+			}
 		}
 
 		this->currentProcessingGradient = gradient;
-		gradientMap[gradient->getID()] = gradient;
+		gradientMap[id] = gradient;
 	}
 }
 

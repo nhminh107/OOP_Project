@@ -14,6 +14,7 @@
 #include <codecvt>
 #include "rapidxml.hpp"
 #include <objidl.h>
+#include <iomanip>
 #include <gdiplus.h>
 #include <SDKDDKVer.h>
 #define WIN32_LEAN_AND_MEAN 

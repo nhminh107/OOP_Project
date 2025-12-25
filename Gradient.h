@@ -38,6 +38,9 @@ public:
 	virtual Gdiplus::Brush* createBrush(const Gdiplus::RectF& shapeBound, float opacity) = 0; 
 	vector<stop> getStopList(); 
 	void updateTransform(string str); 
+	void setStopList(vector<stop> list) {
+		this->stopList = list; 
+	}
 	void getTransformMatrix(Matrix* matrix); // (1) 
 	/*Hàm creatBrush: 
 	Mỗi hình có thể có fill-opacity riêng, mỗi stop cũng có opacity riêng. Khi Brush thì phải lwaays Opacity từng stop nhân với tổng thể của Shape
