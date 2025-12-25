@@ -1,5 +1,6 @@
-#include "Library.h"
+﻿#include "Library.h"
 Shape::Shape() {
+	grad = NULL; 
 	text_name = "", line_str = "", shape = "";
 	isSelected = false;
 }
@@ -10,7 +11,12 @@ string Shape::getName() {
 	return this->shape;
 }
 
-
+gradient* Shape::getGrad() {
+	return this->grad; 
+}
+void Shape::setGrad(gradient* grad) {
+	this->grad = grad; 
+}
 void Shape::setName(string s) {
 	this->shape = s;
 }
@@ -153,4 +159,17 @@ void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {
 			}
 		}
 	}
+}
+
+void Shape::convertGradient(gradient* grad) {
+
+	//Tí sửa hàm này lại theo enum 
+	if (grad->getGradId() == 1) {
+		this->grad = new lineargradient;
+	}
+	else if (grad->getGradId() == 2) {
+		this->grad = new radialgradient;
+	}
+	else this->grad = NULL;
+	this->grad = grad;
 }

@@ -9,6 +9,8 @@ protected:
     stroke strk;
     color fill;
 
+    gradient* grad; 
+
 public:
     Shape();
     virtual ~Shape();
@@ -18,14 +20,17 @@ public:
     string getTextName();
     stroke getStroke();
     color getColor();
+    gradient* getGrad(); 
     vector<pair<string, vector<float>>> getTransVct();
     void setName(string);
     void setTextName(string);
+    void setGrad(gradient* grad);
     void setLine(string);
     void setStroke(stroke);
     void setSelected(bool s) { isSelected = s;  }
     void setColor(color);
     void updateTransformVct(string);
+    void convertGradient(gradient* grad); 
     void getTransformMatrix(Gdiplus::Matrix* matrix);
     virtual void draw(Graphics& graphics) = 0;
 };

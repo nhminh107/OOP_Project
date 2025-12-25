@@ -33,9 +33,11 @@ using namespace Gdiplus;
 #include "Point.h"      // Tọa độ điểm
 #include "viewBox.h"    // Khung nhìn
 
+#include "Gradient.h"
+#include "LinearGradient.h"
+#include "RadialGradient.h"
+
 #include "Shape.h"
-
-
 #include "Rectangle.h"
 #include "Line.h"
 #include "Circle.h"
