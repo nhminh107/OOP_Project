@@ -1,4 +1,4 @@
-#ifndef _GRADIENT_H_
+﻿#ifndef _GRADIENT_H_
 #define _GRADIENT_H_
 
 
@@ -12,6 +12,11 @@ public:
 	stop(color, float);
 };
 
+enum GradientUnits {
+	OBJECT_BOUNDING_BOX, // Mặc định
+	USER_SPACE_ON_USE
+};
+
 enum GradientType {
 	LINEAR,
 	RADIAL
@@ -20,6 +25,7 @@ class gradient {
 protected:
 	string strLine;
 	int gradId;
+	GradientUnits units = OBJECT_BOUNDING_BOX;
 	vector<stop> stopVct;
 	vector<pair<string, vector<float>>> gradientTrans;
 
@@ -40,6 +46,9 @@ public:
 	gradient();
 	gradient(const gradient&);
 	gradient& operator =(const gradient&);
+	virtual Gdiplus::Brush* createBrush(Gdiplus::RectF bounds) = 0;
+	void setUnits(GradientUnits u) { units = u; }
+	GradientUnits getUnits() { return units; }
 	~gradient();
 };
 
