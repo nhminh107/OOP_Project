@@ -22,6 +22,42 @@ GradientType LinearGradient::getType() const {
 	return LINEAR; 
 }
 
+void LogLinearBrushStep(string id, Gdiplus::PointF p1, Gdiplus::PointF p2,
+    float* points, Gdiplus::Color* colors, int size, Gdiplus::Matrix* mat) {
+
+    // ios::app để lưu lại lịch sử tất cả các lần hình được vẽ
+    std::ofstream log("LINEAR_DEBUG_TRACE.txt", std::ios::app);
+    if (!log.is_open()) return;
+
+    log << "================================================================" << endl;
+    log << ">>> [LINEAR BRUSH RUN] ID: " << id << endl;
+
+    // 1. Kiểm tra tọa độ Pixel thực tế sau khi đã nhân Bound
+    log << "    - GDI+ P1 (Pixel): (" << p1.X << ", " << p1.Y << ")" << endl;
+    log << "    - GDI+ P2 (Pixel): (" << p2.X << ", " << p2.Y << ")" << endl;
+
+    // 2. Kiểm tra danh sách màu sau khi xử lý chèn biên (0.0 và 1.0)
+    log << "    - Interpolation Stops (Total: " << size << "):" << endl;
+    for (int i = 0; i < size; i++) {
+        log << "      [" << i << "] Offset: " << std::fixed << std::setprecision(2) << points[i]
+            << " | ARGB: (" << (int)colors[i].GetA() << ","
+            << (int)colors[i].GetR() << ","
+            << (int)colors[i].GetG() << ","
+            << (int)colors[i].GetB() << ")" << endl;
+    }
+
+    // 3. Kiểm tra Ma trận biến đổi cuối cùng
+    float e[6];
+    mat->GetElements(e);
+    log << "    - Final Matrix: [" << e[0] << "," << e[1] << "," << e[2] << ","
+        << e[3] << "," << e[4] << "," << e[5] << "]" << endl;
+
+    log << "================================================================" << endl;
+
+    log.flush();
+    log.close();
+}
+
 Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opacity) {
     Matrix mat;
     this->getTransformMatrix(&mat);
@@ -55,6 +91,9 @@ Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opaci
             ColorOffset[k].stopColor.g,
             ColorOffset[k].stopColor.b);
     }
+
+    // GỌI HÀM TEST TẠI ĐÂY
+    LogLinearBrushStep(this->id, p1, p2, points, colors, size, &mat);
 
     LinearGradientBrush* brush = new LinearGradientBrush(p1, p2, colors[0], colors[size - 1]);
     brush->SetInterpolationColors(colors, points, size);

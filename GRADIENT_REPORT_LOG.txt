@@ -3,21 +3,29 @@ Generated on: 2025-12-25
 Total Gradients in Map: 2
 ==============================================================
 
->>> GRADIENT ID: [childInherit]
-    Type: LINEAR
-    - Start: (0, 0)
-    - End:   (0, 1)
-    - Stops Count: 2
+>>> GRADIENT ID: [rainbowRadial]
+    Type: RADIAL
+    - Center: (0.5, 0.5)
+    - Radius: 0.5
+    - Focal:  (0.5, 0.5)
+    - Stops Count: 6
       [0] Offset: 0.00 | Color: RGB(255,0,0) | Opacity: 1.00
-      [1] Offset: 1.00 | Color: RGB(255,255,0) | Opacity: 1.00
+      [1] Offset: 0.20 | Color: RGB(255,127,0) | Opacity: 1.00
+      [2] Offset: 0.40 | Color: RGB(255,255,0) | Opacity: 1.00
+      [3] Offset: 0.60 | Color: RGB(0,255,0) | Opacity: 1.00
+      [4] Offset: 0.80 | Color: RGB(0,0,255) | Opacity: 1.00
+      [5] Offset: 1.00 | Color: RGB(139,0,255) | Opacity: 1.00
 --------------------------------------------------------------
->>> GRADIENT ID: [parentLinear]
+>>> GRADIENT ID: [auroraLinear]
     Type: LINEAR
     - Start: (0.00, 0.00)
     - End:   (1.00, 0.00)
-    - Stops Count: 2
-      [0] Offset: 0.00 | Color: RGB(255,0,0) | Opacity: 1.00
-      [1] Offset: 1.00 | Color: RGB(255,255,0) | Opacity: 1.00
+    - Stops Count: 5
+      [0] Offset: 0.00 | Color: RGB(0,198,255) | Opacity: 1.00
+      [1] Offset: 0.25 | Color: RGB(0,114,255) | Opacity: 1.00
+      [2] Offset: 0.50 | Color: RGB(58,28,113) | Opacity: 1.00
+      [3] Offset: 0.75 | Color: RGB(215,109,119) | Opacity: 1.00
+      [4] Offset: 1.00 | Color: RGB(255,175,123) | Opacity: 1.00
 --------------------------------------------------------------
 
 [HINT FOR DEBUG]:
