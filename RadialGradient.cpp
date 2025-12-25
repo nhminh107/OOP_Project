@@ -43,30 +43,42 @@ GradientType radialgradient::getType() {
 	return GradientType::RADIAL; 
 }
 
-Gdiplus::Brush* radialgradient::createBrush(RectF bound) {
+Gdiplus::Brush* radialgradient::createBrush(Gdiplus::RectF bounds) {
 	using namespace Gdiplus;
-	float cx = this->getCx();
-	float cy = this->getCy();
-	float r = this->getR();
+	float realCx, realCy, realRx, realRy;
+
+	// Logic Mapping chuẩn cho OBJECT_BOUNDING_BOX
+	if (this->getUnits() == OBJECT_BOUNDING_BOX) {
+		realCx = bounds.X + this->getCx() * bounds.Width;
+		realCy = bounds.Y + this->getCy() * bounds.Height;
+		realRx = this->getR() * bounds.Width;
+		realRy = this->getR() * bounds.Height;
+	}
+	else {
+		realCx = this->getCx(); realCy = this->getCy();
+		realRx = realRy = this->getR();
+	}
+
+	GraphicsPath* pathE = new GraphicsPath();
+	pathE->AddEllipse(RectF(realCx - realRx, realCy - realRy, realRx * 2, realRy * 2));
+	PathGradientBrush* fillBrush = new PathGradientBrush(pathE);
+
 	vector<stop> ColorOffset = this->getStopVct();
 	int size = ColorOffset.size();
 
-	GraphicsPath* pathE = new GraphicsPath();
-	pathE->AddEllipse(RectF(cx - r, cy - r, r * 2, r * 2));
-	PathGradientBrush* fillPath = new PathGradientBrush(pathE);
-
-	if (ColorOffset[0].offset != 0) {
+	// Logic xử lý stop màu của bạn
+	if (size > 0 && ColorOffset[0].offset != 0) {
 		color first = ColorOffset[0].stopColor;
 		float offset = ColorOffset[0].offset;
 		color zero{ first.r * (1 - offset), first.g * (1 - offset), first.b * (1 - offset), first.opacity * (1 - offset) };
 		ColorOffset.insert(ColorOffset.begin(), stop(zero, 0));
 		size++;
 	}
-
-	if (ColorOffset[size - 1].offset != 1) {
+	if (size > 0 && ColorOffset[size - 1].offset != 1) {
 		color last = ColorOffset[size - 1].stopColor;
 		float offset = ColorOffset[size - 1].offset;
-		color one{ last.r * (1 / offset), last.g * (1 / offset), last.b * (1 / offset), last.opacity * (1 / offset) };
+		float safeOff = (offset == 0) ? 1.0f : offset;
+		color one{ last.r * (1 / safeOff), last.g * (1 / safeOff), last.b * (1 / safeOff), last.opacity * (1 / safeOff) };
 		ColorOffset.push_back(stop(one, 1));
 		size++;
 	}
@@ -78,33 +90,24 @@ Gdiplus::Brush* radialgradient::createBrush(RectF bound) {
 		colors[k] = Color(ColorOffset[size - k - 1].stopColor.opacity * 255, ColorOffset[size - k - 1].stopColor.r, ColorOffset[size - k - 1].stopColor.g, ColorOffset[size - k - 1].stopColor.b);
 	}
 
+	// Logic Transform
 	vector<pair<string, vector<float>>> gradientTrans = this->getGradientTrans();
 	for (int k = 0; k < gradientTrans.size(); ++k) {
-		if (gradientTrans[k].first == "translate") {
-			fillPath->TranslateTransform(gradientTrans[k].second[0], gradientTrans[k].second[1]);
-		}
-		else if (gradientTrans[k].first == "rotate") {
-			fillPath->RotateTransform(gradientTrans[k].second[0]);
-		}
-		else if (gradientTrans[k].first == "scale") {
-			fillPath->ScaleTransform(gradientTrans[k].second[0], gradientTrans[k].second[1]);
-		}
+		if (gradientTrans[k].first == "translate") fillBrush->TranslateTransform(gradientTrans[k].second[0], gradientTrans[k].second[1]);
+		else if (gradientTrans[k].first == "rotate") fillBrush->RotateTransform(gradientTrans[k].second[0]);
+		else if (gradientTrans[k].first == "scale") fillBrush->ScaleTransform(gradientTrans[k].second[0], gradientTrans[k].second[1]);
 		else if (gradientTrans[k].first == "matrix") {
-			Matrix matrix(
-				gradientTrans[k].second[0], gradientTrans[k].second[1], gradientTrans[k].second[2],
-				gradientTrans[k].second[3], gradientTrans[k].second[4], gradientTrans[k].second[5]
-			);
-			fillPath->SetTransform(&matrix);
+			Matrix matrix(gradientTrans[k].second[0], gradientTrans[k].second[1], gradientTrans[k].second[2],
+				gradientTrans[k].second[3], gradientTrans[k].second[4], gradientTrans[k].second[5]);
+			fillBrush->SetTransform(&matrix);
 			pathE->Transform(&matrix);
 		}
 	}
 
-	fillPath->SetInterpolationColors(colors, points, size);
+	fillBrush->SetInterpolationColors(colors, points, size);
 
-	delete pathE;
-	delete[] colors;
-	delete[] points;
-	return fillPath;
+	delete pathE; delete[] colors; delete[] points;
+	return fillBrush;
 }
 
 float parseSVGValue2(string val) {
