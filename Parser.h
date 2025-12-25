@@ -8,7 +8,7 @@ private:
 	void processColor(string, string, color&);
 	void loadColorMap();
 	void processProperty(string, string, string, Shape*&);
-	Gradient* currentProcessingGradient; 
+	Gradient* currentProcessingGradient = NULL; 
 
 public:
 	~parser(); //Viết hàm Hủy cho Parser 

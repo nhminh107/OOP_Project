@@ -22,54 +22,46 @@ GradientType LinearGradient::getType() const {
 	return LINEAR; 
 }
 
-
 Brush* LinearGradient::createBrush(const Gdiplus::RectF& shapeBound, float opacity) {
+    Matrix mat;
+    this->getTransformMatrix(&mat);
 
-	Matrix mat;
-	this->getTransformMatrix(&mat);
+    // 1. Map tọa độ Start/End (Giữ logic Mapping của bạn vì nó chuẩn hơn cho objectBoundingBox)
+    PointF p1(shapeBound.X + this->start.x * shapeBound.Width, shapeBound.Y + this->start.y * shapeBound.Height);
+    PointF p2(shapeBound.X + this->end.x * shapeBound.Width, shapeBound.Y + this->end.y * shapeBound.Height);
 
+    // 2. Xử lý danh sách Stops (Bắt chước logic chèn biên của bạn bạn)
+    vector<stop> ColorOffset = this->stopList;
+    if (ColorOffset.empty()) return new SolidBrush(Color(255, 0, 0, 0));
 
-	// Biến đổi các điểm normalized [0,1] trước
-	Gdiplus::PointF pStartNorm(this->start.x, this->start.y);
-	Gdiplus::PointF pEndNorm(this->end.x, this->end.y);
-	mat.TransformPoints(&pStartNorm);
-	mat.TransformPoints(&pEndNorm);
+    // Chèn stop 0 nếu thiếu
+    if (ColorOffset[0].offset != 0) {
+        ColorOffset.insert(ColorOffset.begin(), stop(ColorOffset[0].stopColor, 0));
+    }
+    // Chèn stop 1 nếu thiếu
+    if (ColorOffset.back().offset != 1) {
+        ColorOffset.push_back(stop(ColorOffset.back().stopColor, 1));
+    }
 
-	// Sau đó mới map vào shapeBound tuyệt đối
-	Gdiplus::PointF pStart(
-		shapeBound.X + pStartNorm.X * shapeBound.Width,
-		shapeBound.Y + pStartNorm.Y * shapeBound.Height
-	);
-	Gdiplus::PointF pEnd(
-		shapeBound.X + pEndNorm.X * shapeBound.Width,
-		shapeBound.Y + pEndNorm.Y * shapeBound.Height
-	);
+    int size = ColorOffset.size();
+    float* points = new float[size];
+    Color* colors = new Color[size];
 
-	if (abs(pStart.X - pEnd.X) < 0.001f && abs(pStart.Y - pEnd.Y) < 0.001f) {
-		pEnd.X += 0.1f; // Dịch chuyển nhẹ để brush vẫn có thể khởi tạo
-	}
+    for (int k = 0; k < size; k++) {
+        points[k] = ColorOffset[k].offset;
+        // Logic nhân opacity chuẩn của bạn bạn
+        colors[k] = Color(ColorOffset[k].stopColor.opacity * 255,
+            ColorOffset[k].stopColor.r,
+            ColorOffset[k].stopColor.g,
+            ColorOffset[k].stopColor.b);
+    }
 
-	LinearGradientBrush* brush = new LinearGradientBrush(pStart, pEnd, Gdiplus::Color(255, 0, 0, 0), Gdiplus::Color(255, 255, 255, 255));
+    LinearGradientBrush* brush = new LinearGradientBrush(p1, p2, colors[0], colors[size - 1]);
+    brush->SetInterpolationColors(colors, points, size);
+    brush->SetTransform(&mat); // Áp transform sau cùng
 
-	int count = stopList.size();
-	if (count >= 2) {
-		vector<Color> colors(count);
-		vector<float> offsets(count);
-	
-
-		for (int i = 0; i < count; i++) {
-			int a = (int)(stopList[i].stopColor.opacity * opacity * 255);
-			colors[i] = Gdiplus::Color(a, stopList[i].stopColor.r,
-				stopList[i].stopColor.g,
-				stopList[i].stopColor.b);
-			offsets[i] = stopList[i].offset;
-		}
-
-		// Truyền con trỏ từ vector bằng hàm .data()
-		brush->SetInterpolationColors(colors.data(), offsets.data(), count);
-	}
-
-	return brush; 
+    delete[] points; delete[] colors;
+    return brush;
 }
 
 /*LƯU Ý : 

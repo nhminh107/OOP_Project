@@ -4,6 +4,11 @@
 struct stop {
 	float offset;
 	color stopColor;
+
+	stop(color& clr, float off) {
+		offset = off; 
+		stopColor = clr; 
+	}
 };
 
 enum GradientType {
@@ -31,6 +36,7 @@ public:
 	virtual GradientType getType() const = 0; 
 	void addStop(float offset, color c); 
 	virtual Gdiplus::Brush* createBrush(const Gdiplus::RectF& shapeBound, float opacity) = 0; 
+	vector<stop> getStopList(); 
 	void updateTransform(string str); 
 	void getTransformMatrix(Matrix* matrix); // (1) 
 	/*Hàm creatBrush: 

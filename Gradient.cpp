@@ -91,6 +91,9 @@ void Gradient::updateTransform(string str) {
 
 }
 
+vector<stop> Gradient::getStopList() {
+	return this->stopList; 
+}
 void Gradient::getTransformMatrix(Matrix* matrix) {
 	matrix->Reset(); 
 
@@ -120,5 +123,5 @@ void Gradient::getTransformMatrix(Matrix* matrix) {
 	}
 }
 void Gradient::addStop(float offset, color c) {
-	stopList.push_back({ offset, c }); 
+	stopList.push_back({c, offset }); 
 }

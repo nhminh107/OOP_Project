@@ -88,8 +88,6 @@ void parser::processColor(string strokecolor, string strokeopa, color& clr) {
 string getVal(string attrName, string property) {
 	stringstream sss(property);
 	string attr, temp, value;
-
-	// Duyệt qua luồng để tìm đúng tên thuộc tính
 	while (sss >> attr) {
 		// Đọc đến dấu ngoặc kép đầu tiên (bỏ qua khoảng trắng dư thừa)
 		getline(sss, temp, '"');
@@ -169,6 +167,36 @@ void parser::parseGradient(string name, string property) {
 	}
 }
 
+void parseStyleContent(string styleValue, string& fill, string& fillOpa,
+	string& strokeWidth, string& strokeOpa, string& sStroke, bool& isGradient) {
+	stringstream valStream(styleValue);
+	string attr, subVal, subTemp;
+
+	while (valStream >> attr) {
+		// Sử dụng getline với dấu phân cách '"' giống hệt cách parse thẻ
+		getline(valStream, subTemp, '"');
+		getline(valStream, subVal, '"');
+
+		if (attr == "fill") {
+			if (subVal.find("url") != string::npos) {
+				isGradient = true;
+				// Logic tách ID Gradient từ url(#id)
+				size_t start = subVal.find('#');
+				size_t end = subVal.find(')');
+				if (start != string::npos && end != string::npos) {
+					subVal = subVal.substr(start + 1, end - start - 1);
+				}
+			}
+			fill = subVal;
+		}
+		else if (attr == "fill-opacity") fillOpa = subVal;
+		else if (attr == "stroke-width") strokeWidth = subVal;
+		else if (attr == "stroke-opacity") strokeOpa = subVal;
+		else if (attr == "stroke") sStroke = subVal;
+	}
+}
+
+
 
 // --- HÀM XỬ LÝ THUỘC TÍNH (ĐÃ BỎ LOGIC GRADIENT) ---
 void parser::processProperty(string name, string property, string textName, Shape*& shape) {
@@ -181,54 +209,37 @@ void parser::processProperty(string name, string property, string textName, Shap
 	string strokeWidth = "1", sStroke = "", strokeOpa = "1", fill = "", fillOpa = "1";
 	string strTransform = "";
 	string temp = "";
+	bool isGradient = false;
+
 
 	while (ss >> attribute) {
 		getline(ss, temp, '"');
 		getline(ss, value, '"');
 
 		if (attribute == "style") {
-			// Xử lý chuỗi style="..."
+			// 1. Chèn dấu ngoặc kép bao quanh các giá trị sau dấu ':' và trước dấu ';'
 			for (int i = 0; i < value.size(); i++) {
 				if (value[i] == ':') {
-					value.insert(value.begin() + i + 1, '"');
+					value.insert(value.begin() + i + 1, '"'); // Chèn " sau dấu :
 					i++;
 				}
 				else if (value[i] == ';') {
-					value.insert(value.begin() + i, '"');
+					value.insert(value.begin() + i, '"');     // Chèn " trước dấu ;
 					i++;
 				}
 			}
-			value.push_back('"');
+			value.push_back('"'); // Thêm dấu " kết thúc cho giá trị cuối cùng
 
+			// 2. Thay thế ':' và ';' thành khoảng trắng để stringstream dễ đọc
 			for (int i = 0; i < value.size(); i++) {
 				if (value[i] == ':' || value[i] == ';')
 					value[i] = ' ';
 			}
-			stringstream valStream(value);
-			string attr, subVal, subTemp;
 
-			while (valStream >> attr) {
-				getline(valStream, subTemp, '"');
-				getline(valStream, subVal, '"');
-
-				if (attr == "fill") {
-					fill = subVal;
-				}
-				if (attr == "fill-opacity") {
-					fillOpa = subVal;
-				}
-				if (attr == "stroke-width") {
-					strokeWidth = subVal;
-				}
-				if (attr == "stroke-opacity") {
-					strokeOpa = subVal;
-				}
-				if (attr == "stroke") {
-					sStroke = subVal; // Đã sửa value thành subVal cho đúng logic style
-				}
-			}
+			// Lúc này chuỗi 'value' đã có dạng: fill "red" stroke-width "2"
+			// Tiếp theo là parse chuỗi mới này
+			parseStyleContent(value, fill, fillOpa, strokeWidth, strokeOpa, sStroke, isGradient);
 		}
-
 		// Xử lý các attribute rời rạc
 		if (attribute == "stroke-width")
 			strokeWidth = value;

@@ -8,9 +8,9 @@ private:
 	point focalPoint; //Điểm hội tụ 
 public: 
 	RadialGradient(); 
-	point getCenter() const ;
-	point getFocal() const;
-	float getRadius() const;
+	point getCenter() { return center; }
+	point getFocal() { return focalPoint; }
+	float getRadius() { return radius; }
 	void setFocal(float x1, float x2); 
 	void setCenter(float x, float y); 
 	void setRadius(float r); 

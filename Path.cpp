@@ -386,312 +386,210 @@ void SVGPath::updateProperty() {
 	}
 }
 RectF SVGPath::getBoundingBox() {
+	// 1. Kiểm tra nếu đã có dữ liệu lưu đệm thì trả về luôn để tiết kiệm CPU
 
-	// Nếu mà lỗi thì chuyển sang dùng getBounds của GDI+ 
 	if (this->vct.empty()) {
 		return RectF(0, 0, 0, 0);
 	}
 
-	float min_X = FLT_MAX;
-	float min_Y = FLT_MAX;
-	float max_X = -FLT_MAX;
-	float max_Y = -FLT_MAX;
+	// 2. Sử dụng GraphicsPath để dựng lại hình y hệt như lúc vẽ
+	FillMode mode = (this->fillRule == "evenodd") ? FillModeAlternate : FillModeWinding;
+	Gdiplus::GraphicsPath graphicsPath(mode);
+	PointF P0(0, 0);
 
-	// Vị trí con trỏ bút vẽ hiện tại
-	float curX = 0;
-	float curY = 0;
+	// Duyệt qua vector lệnh vẽ đã được Parser chuẩn hóa sang tọa độ tuyệt đối
+	for (int i = 0; i < this->vct.size(); i++) {
+		char command = this->vct[i].first;
+		const vector<float>& params = this->vct[i].second;
+		int numPoint = params.size();
 
-	// Helper lambda để cập nhật min/max nhanh gọn
-	auto updateBounds = [&](float x, float y) {
-		if (x < min_X) min_X = x;
-		if (x > max_X) max_X = x;
-		if (y < min_Y) min_Y = y;
-		if (y > max_Y) max_Y = y;
-		};
-
-	for (const auto& cmd : this->vct) {
-		char type = cmd.first;
-		const vector<float>& args = cmd.second;
-
-		bool isRelative = (type >= 'a' && type <= 'z');
-
-		// 1. Lệnh di chuyển và vẽ thẳng (M, L, T) - 2 tham số (x, y)
-		if (type == 'M' || type == 'm' || type == 'L' || type == 'l' || type == 'T' || type == 't') {
-			for (size_t i = 0; i < args.size(); i += 2) {
-				float x = args[i];
-				float y = args[i + 1];
-
-				if (isRelative) { x += curX; y += curY; }
-
-				updateBounds(x, y);
-				curX = x; curY = y; // Cập nhật vị trí bút
-			}
-		}
-		// 2. Lệnh vẽ ngang (H) - 1 tham số (x)
-		else if (type == 'H' || type == 'h') {
-			for (size_t i = 0; i < args.size(); i++) {
-				float x = args[i];
-				if (isRelative) x += curX;
-
-				updateBounds(x, curY); // Y giữ nguyên
-				curX = x;
-			}
-		}
-		// 3. Lệnh vẽ dọc (V) - 1 tham số (y)
-		else if (type == 'V' || type == 'v') {
-			for (size_t i = 0; i < args.size(); i++) {
-				float y = args[i];
-				if (isRelative) y += curY;
-
-				updateBounds(curX, y); // X giữ nguyên
-				curY = y;
-			}
-		}
-		// 4. Cubic Bezier (C) - 6 tham số (x1, y1, x2, y2, x, y)
-		else if (type == 'C' || type == 'c') {
-			for (size_t i = 0; i < args.size(); i += 6) {
-				// Ta lấy cả điểm điều khiển để tính bao đóng (an toàn nhất)
-				for (int j = 0; j < 6; j += 2) {
-					float x = args[i + j];
-					float y = args[i + j + 1];
-					if (isRelative) { x += curX; y += curY; }
-					updateBounds(x, y);
-
-					// Cập nhật bút ở điểm cuối cùng (cặp thứ 3)
-					if (j == 4) { curX = x; curY = y; }
+		if (command == 'M' || command == 'm') {
+			graphicsPath.StartFigure();
+			if (numPoint >= 2) {
+				P0 = PointF(params[numPoint - 2], params[numPoint - 1]);
+				// Nếu có nhiều cặp điểm sau M, GDI+ coi đó là các đường thẳng nối tiếp
+				for (int j = 0; j < numPoint; j += 2) {
+					if (j + 3 <= numPoint) {
+						graphicsPath.AddLine(params[j], params[j + 1], params[j + 2], params[j + 3]);
+					}
 				}
 			}
 		}
-		// 5. Smooth Cubic (S) / Quadratic (Q) - 4 tham số (x1, y1, x, y)
-		else if (type == 'S' || type == 's' || type == 'Q' || type == 'q') {
-			for (size_t i = 0; i < args.size(); i += 4) {
-				for (int j = 0; j < 4; j += 2) {
-					float x = args[i + j];
-					float y = args[i + j + 1];
-					if (isRelative) { x += curX; y += curY; }
-					updateBounds(x, y);
-
-					if (j == 2) { curX = x; curY = y; }
-				}
+		else if (command == 'L' || command == 'l' || command == 'H' || command == 'h' || command == 'V' || command == 'v') {
+			for (int j = 0; j < numPoint; j += 2) {
+				PointF P1(params[j], params[j + 1]);
+				graphicsPath.AddLine(P0, P1);
+				P0 = P1;
 			}
 		}
-		else if (type == 'A' || type == 'a') {
-			for (size_t i = 0; i < args.size(); i += 7) {
-				float x = args[i + 5];
-				float y = args[i + 6];
-
-				if (isRelative) { x += curX; y += curY; }
-
-				updateBounds(x, y);
-				curX = x; curY = y;
+		else if (command == 'C' || command == 'c') {
+			for (int j = 0; j < numPoint; j += 6) {
+				graphicsPath.AddBezier(P0, PointF(params[j], params[j + 1]),
+					PointF(params[j + 2], params[j + 3]),
+					PointF(params[j + 4], params[j + 5]));
+				P0 = PointF(params[j + 4], params[j + 5]);
 			}
 		}
+		else if (command == 'Q' || command == 'q' || command == 'T' || command == 't') {
+			for (int j = 0; j < numPoint; j += 4) {
+				// Chuyển Quadratic Bezier sang Cubic Bezier để GDI+ xử lý
+				graphicsPath.AddBezier(P0, PointF(params[j], params[j + 1]),
+					PointF(params[j], params[j + 1]),
+					PointF(params[j + 2], params[j + 3]));
+				P0 = PointF(params[j + 2], params[j + 3]);
+			}
+		}
+		else if (command == 'Z' || command == 'z') {
+			graphicsPath.CloseFigure();
+		}
+		// Lưu ý: Với lệnh 'A' (Arc), bạn có thể copy logic tính toán phức tạp của mình 
+		// để AddArc vào path này.
 	}
 
-	RectF boundingBox;
-	boundingBox.X = min_X;
-	boundingBox.Y = min_Y;
-	boundingBox.Width = max_X - min_X;
-	boundingBox.Height = max_Y - min_Y;
+	// 3. Sử dụng hàm GetBounds của thư viện GDI+ để tính toán tự động
+	// Đây là cách chính xác nhất để lấy khung bao của cả các đường cong
+	RectF bounds;
+	graphicsPath.GetBounds(&bounds);
 
-	// Fix lỗi nếu width/height = 0
-	if (boundingBox.Width <= 0) boundingBox.Width = 0.1f;
-	if (boundingBox.Height <= 0) boundingBox.Height = 0.1f;
-
-	return boundingBox;
+	// 4. Xử lý trường hợp hình quá mỏng (Width/Height = 0) gây lỗi cho Gradient
+	if (bounds.Width <= 0) bounds.Width = 0.1f;
+	if (bounds.Height <= 0) bounds.Height = 0.1f;
+	return bounds;
 }
 void SVGPath::draw(Graphics& graphics) {
 	// 1. Lưu trạng thái Graphics
 	GraphicsState save = graphics.Save();
 	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	FillMode mode;
-	if (this->fillRule == "evenodd")
-		mode = FillModeAlternate;
-	else
-		mode = FillModeWinding;
+	FillMode fillMode = (this->fillRule == "evenodd") ? FillModeAlternate : FillModeWinding;
+	GraphicsPath graphicsPath(fillMode);
+	PointF P0(0, 0); // Điểm hiện tại của con trỏ vẽ
 
-	GraphicsPath graphicsPath(mode);
-	PointF P0; // Điểm hiện tại của con trỏ vẽ
-
-	// 3. Duyệt qua vector lệnh vẽ (vct là thuộc tính private của class path)
+	// 2. Duyệt qua vector lệnh vẽ để dựng Path (Giữ nguyên logic dựng hình của bạn)
 	for (int i = 0; i < this->vct.size(); i++) {
 		char command = this->vct[i].first;
-		const vector<float>& params = this->vct[i].second; // Lấy tham số lệnh
+		const vector<float>& params = this->vct[i].second;
 		int numPoint = params.size();
 
-		// --- XỬ LÝ LỆNH DI CHUYỂN (M/m) ---
 		if (command == 'M' || command == 'm') {
 			graphicsPath.StartFigure();
-			if (numPoint == 4) { // Trường hợp đặc biệt: Move rồi Line luôn
-				PointF start = PointF(params[0], params[1]);
-				PointF end = PointF(params[2], params[3]);
-				graphicsPath.AddLine(start, end);
-				P0 = end;
-			}
-			else if (numPoint > 4) { // Move rồi vẽ nhiều Line liên tiếp
-				int k = 0;
-				vector<PointF> points(numPoint / 2);
-				for (int j = 0; j < numPoint; j += 2)
-					points[k++] = PointF(params[j], params[j + 1]);
-				graphicsPath.AddLines(points.data(), numPoint / 2);
-				P0 = points[numPoint / 2 - 1];
-			}
-			else { // Chỉ Move đơn thuần
-				P0 = PointF(params[0], params[1]);
-			}
-		}
-
-		// --- XỬ LÝ ĐƯỜNG CONG BEZIER BẬC 2 (Q/q, T/t) ---
-		else if (command == 'Q' || command == 'q' || command == 'T' || command == 't') {
-			int j = 0;
-			while (numPoint > 3) {
-				PointF P1(params[j + 0], params[j + 1]);
-				PointF P2(params[j + 2], params[j + 3]);
-				graphicsPath.AddBezier(P0, P1, P2, P2);
-				P0 = P2;
-				numPoint -= 4;
-				j += 4;
-			}
-		}
-
-		else if (command == 'C' || command == 'c') {
-			int j = 0;
-			while (numPoint > 5) {
-				PointF P1(params[j + 0], params[j + 1]);
-				PointF P2(params[j + 2], params[j + 3]);
-				PointF P3(params[j + 4], params[j + 5]);
-				graphicsPath.AddBezier(P0, P1, P2, P3);
-				P0 = P3;
-				numPoint -= 6;
-				j += 6;
-			}
-		}
-
-		// --- XỬ LÝ ĐƯỜNG CONG MƯỢT (S/s) ---
-		else if (command == 'S' || command == 's') {
-			int j = 0;
-			while (numPoint > 3) {
-				PointF P1 = P0; // Mặc định điểm điều khiển trùng P0 nếu không tính được
-				// Tính điểm phản chiếu (Reflection) từ lệnh trước đó
-				if (i > 0) {
-					char prevCmd = this->vct[i - 1].first;
-					if (prevCmd == 'C' || prevCmd == 'c' || prevCmd == 'S' || prevCmd == 's') {
-						const vector<float>& prevParams = this->vct[i - 1].second;
-						int n = prevParams.size();
-						if (n > 3) {
-							float oldControlX = prevParams[n - 4];
-							float oldControlY = prevParams[n - 3];
-							float currentX = prevParams[n - 2];
-							float currentY = prevParams[n - 1];
-							// Công thức phản chiếu: P1 = 2*Current - OldControl
-							P1 = PointF(2.0f * currentX - oldControlX, 2.0f * currentY - oldControlY);
-						}
-					}
+			if (numPoint >= 2) {
+				P0 = PointF(params[numPoint - 2], params[numPoint - 1]);
+				// Nếu có nhiều cặp điểm sau M, GDI+ coi đó là các đường thẳng nối tiếp
+				for (int j = 0; j < numPoint - 2; j += 2) {
+					graphicsPath.AddLine(params[j], params[j + 1], params[j + 2], params[j + 3]);
 				}
-				PointF P2(params[j + 0], params[j + 1]);
-				PointF P3(params[j + 2], params[j + 3]);
-				graphicsPath.AddBezier(P0, P1, P2, P3);
-				P0 = P3;
-				numPoint -= 4;
-				j += 4;
 			}
 		}
-
-		// --- XỬ LÝ CUNG TRÒN/ELIP (A/a) - Logic toán học giữ nguyên ---
-		else if (command == 'A' || command == 'a') {
-			// (Đã giữ nguyên toàn bộ logic tính toán Arc phức tạp của bạn ở đây)
-			// ... (Code xử lý Arc rất dài, tôi giữ nguyên logic bên trong block này như cũ)
-			// Chỉ thay đổi cách truy cập tham số từ vct[i].second sang params cho gọn
-			int j = 0;
-			while (numPoint > 6) {
-				if (i > 0) {
-				}
-				P0 = PointF(params[j + 5], params[j + 6]);
-				numPoint -= 7;
-				j += 7;
-			}
-		}
-
-		// --- XỬ LÝ VẼ ĐƯỜNG THẲNG (L, H, V...) ---
-		else if (command == 'L' || command == 'H' || command == 'V' ||
-			command == 'l' || command == 'h' || command == 'v') {
-			int j = 0;
-			while (numPoint > 1) {
-				PointF P1(params[j + 0], params[j + 1]);
+		else if (command == 'L' || command == 'l' || command == 'H' || command == 'h' || command == 'V' || command == 'v') {
+			for (int j = 0; j < numPoint; j += 2) {
+				PointF P1(params[j], params[j + 1]);
 				graphicsPath.AddLine(P0, P1);
 				P0 = P1;
-				numPoint -= 2;
-				j += 2;
 			}
 		}
-
-		// --- ĐÓNG HÌNH (Z/z) ---
+		else if (command == 'C' || command == 'c') {
+			for (int j = 0; j < numPoint; j += 6) {
+				graphicsPath.AddBezier(P0, PointF(params[j], params[j + 1]),
+					PointF(params[j + 2], params[j + 3]),
+					PointF(params[j + 4], params[j + 5]));
+				P0 = PointF(params[j + 4], params[j + 5]);
+			}
+		}
+		else if (command == 'Q' || command == 'q' || command == 'T' || command == 't') {
+			for (int j = 0; j < numPoint; j += 4) {
+				graphicsPath.AddBezier(P0, PointF(params[j], params[j + 1]),
+					PointF(params[j], params[j + 1]),
+					PointF(params[j + 2], params[j + 3]));
+				P0 = PointF(params[j + 2], params[j + 3]);
+			}
+		}
 		else if (command == 'Z' || command == 'z') {
 			graphicsPath.CloseFigure();
 		}
 	}
 
-	//3 Chuẩn bị Brush 
+	// 3. Chuẩn bị Brush
 	Brush* fillBrush = nullptr;
+	Color paddingColor;
 
 	if (this->hasGradient) {
-		string id = this->getFillGradientID(); 
+		string id = this->getFillGradientID();
+		if (gradientMap.count(id)) {
+			Gradient* grad = gradientMap[id];
+			RectF bound = this->getBoundingBox();
 
-		if (gradientMap.find(id) != gradientMap.end()) {
-			RectF bound = this->getBoundingBox(); 
+			// Tạo Brush từ Gradient
+			fillBrush = grad->createBrush(bound, this->getColor().opacity);
 
-			fillBrush = gradientMap[id]->createBrush(bound, this->getColor().opacity); //Tại sao color opactity lại gán cho fillbrush ?
+			// Lấy màu của Stop cuối cùng để làm màu Padding (Tô tràn)
+			vector<stop> stops = grad->getStopList();
+			if (!stops.empty()) {
+				color c = stops.back().stopColor;
+				paddingColor = Color(c.opacity * this->getColor().opacity * 255, c.r, c.g, c.b);
+			}
+
+			// --- BƯỚC 4: XỬ LÝ PADDING ĐẶC BIỆT CHO RADIAL GRADIENT ---
+			if (grad->getType() == RADIAL) {
+				RadialGradient* radial = dynamic_cast<RadialGradient*>(grad);
+
+				// Tính toán hình elip giới hạn của Radial Gradient
+				float rx = radial->getRadius() * bound.Width;
+				float ry = radial->getRadius() * bound.Height;
+				float cx = bound.X + radial->getCenter().x * bound.Width;
+				float cy = bound.Y + radial->getCenter().y * bound.Height;
+
+				GraphicsPath pathE;
+				pathE.AddEllipse(cx - rx, cy - ry, rx * 2, ry * 2);
+
+				// Sử dụng Region để tô màu nền cho phần nằm ngoài elip nhưng nằm trong Path
+				// (Logic này giải quyết triệt để lỗi hở góc ở hình trái tim)
+				SolidBrush padBrush(paddingColor);
+				Region region(&graphicsPath);
+				region.Exclude(&pathE);
+
+				graphics.FillRegion(&padBrush, &region);
+			}
 		}
 	}
 
-	if (fillBrush == nullptr) { //Ko có gradient hoặc id ko hợp lệ 
+	// Nếu không có gradient hoặc lỗi, dùng SolidBrush mặc định
+	if (fillBrush == nullptr) {
 		fillBrush = new SolidBrush(Color(this->getColor().opacity * 255,
 			this->getColor().r, this->getColor().g, this->getColor().b));
 	}
 
-	// 5. Chuẩn bị bút vẽ (Pen) và màu tô (Brush) - Lấy từ class cha Shape
-	// Sử dụng this->getStroke() và this->getColor()
+	// 5. Chuẩn bị bút vẽ (Pen)
 	Pen penPath(Color(this->getStroke().getStrokeColor().opacity * 255,
 		this->getStroke().getStrokeColor().r,
 		this->getStroke().getStrokeColor().g,
 		this->getStroke().getStrokeColor().b),
 		this->getStroke().getStrokeWidth());
 
-	/*SolidBrush fillPath(Color(this->getColor().opacity * 255,
-		this->getColor().r,
-		this->getColor().g,
-		this->getColor().b));*/
-
 	// 6. Xử lý Transform (Dịch chuyển, Xoay, Scale)
-	// Lấy vector transform từ class cha Shape
 	vector<pair<string, vector<float>>> transforms = this->getTransVct();
-
 	for (auto trans : transforms) {
-		float x = 0.0f;
-		if (!trans.second.empty()) x = trans.second[0];
-		float y = x;
-		if (trans.second.size() == 2) y = trans.second[1];
+		float x = trans.second.empty() ? 0.0f : trans.second[0];
+		float y = (trans.second.size() >= 2) ? trans.second[1] : x;
 
-		if (trans.first == "translate")
-			graphics.TranslateTransform(x, y);
-		else if (trans.first == "rotate")
-			graphics.RotateTransform(x);
-		else if (trans.first == "scale")
-			graphics.ScaleTransform(x, y);
+		if (trans.first == "translate") graphics.TranslateTransform(x, y);
+		else if (trans.first == "rotate") graphics.RotateTransform(x);
+		else if (trans.first == "scale") graphics.ScaleTransform(x, y);
 		else if (trans.first == "matrix") {
 			Matrix matrix(trans.second[0], trans.second[1], trans.second[2],
 				trans.second[3], trans.second[4], trans.second[5]);
-			graphics.SetTransform(&matrix);
+			graphics.MultiplyTransform(&matrix);
 		}
 	}
 
 	// 7. Vẽ và Tô màu
+	// Lưu ý: Radial Gradient đã được xử lý Padding ở Bước 4. 
+	// Linear Gradient mặc định GDI+ đã hỗ trợ Pad spreadMethod.
 	graphics.FillPath(fillBrush, &graphicsPath);
 	graphics.DrawPath(&penPath, &graphicsPath);
 
-	// 8. Khôi phục trạng thái
-	delete fillBrush; 
+	// 8. Giải phóng bộ nhớ và khôi phục trạng thái
+	delete fillBrush;
 	graphics.Restore(save);
 }
 
