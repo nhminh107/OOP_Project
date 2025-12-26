@@ -13,8 +13,8 @@ public:
 };
 
 enum GradientUnits {
-	OBJECT_BOUNDING_BOX, // Mặc định
-	USER_SPACE_ON_USE
+	USER_SPACE_ON_USE,
+	OBJECT_BOUNDING_BOX // Mặc định
 };
 
 enum GradientType {
@@ -42,7 +42,6 @@ public:
 	void addStop(stop);
 	void updateGradientTransform(string);
 	virtual void updateElement();
-
 	gradient();
 	gradient(const gradient&);
 	gradient& operator =(const gradient&);

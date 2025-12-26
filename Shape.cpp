@@ -161,15 +161,19 @@ void Shape::getTransformMatrix(Gdiplus::Matrix* matrix) {
 	}
 }
 
-void Shape::convertGradient(gradient* grad) {
+//void Shape::convertGradient(gradient* grad) {
+//
+//	//Tí sửa hàm này lại theo enum 
+//	if (grad->getGradId() == 1) {
+//		this->grad = new lineargradient;
+//	}
+//	else if (grad->getGradId() == 2) {
+//		this->grad = new radialgradient;
+//	}
+//	else this->grad = NULL;
+//	this->grad = grad;
+//}
 
-	//Tí sửa hàm này lại theo enum 
-	if (grad->getGradId() == 1) {
-		this->grad = new lineargradient;
-	}
-	else if (grad->getGradId() == 2) {
-		this->grad = new radialgradient;
-	}
-	else this->grad = NULL;
-	this->grad = grad;
+void Shape::convertGradient(gradient* grad) {
+	this->grad = grad;  // Chỉ cần dòng này!
 }
