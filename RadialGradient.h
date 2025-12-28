@@ -19,6 +19,7 @@ public:
 	radialgradient(const radialgradient&);
 	radialgradient& operator = (const radialgradient&);
 	GradientType getType() override; 
+	Gdiplus::Brush* createBrush(Gdiplus::RectF bounds) override;
 	bool getIsLink();
 	void setIsLink(bool);
 };

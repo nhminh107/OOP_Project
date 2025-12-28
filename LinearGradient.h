@@ -12,7 +12,7 @@ public:
 	void setB(point);
 	GradientType getType() override; 
 	void updateElement();
-
+	Gdiplus::Brush* createBrush(Gdiplus::RectF bounds) override;
 	lineargradient();
 	lineargradient(const lineargradient&);
 	lineargradient& operator = (const lineargradient&);
