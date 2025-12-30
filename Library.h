@@ -30,7 +30,7 @@ using namespace Gdiplus;
 
 
 #include "Color.h"      // Màu sắc
-#include "Point.h"      // Tọa độ điểm
+#include "Point.hpp"// Tọa độ điểm
 #include "viewBox.h"    // Khung nhìn
 
 #include "Gradient.h"

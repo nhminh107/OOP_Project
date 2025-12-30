@@ -26,6 +26,7 @@ public:
     void setTextName(string);
     void setGrad(gradient* grad);
     void setLine(string);
+    //virtual Gdiplus::RectF getBoundingBox();
     void setStroke(stroke);
     void setSelected(bool s) { isSelected = s;  }
     void setColor(color);

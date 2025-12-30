@@ -1,66 +1,50 @@
 ﻿#include "Library.h"
 
-float radialgradient::getCx() {
-	return cx;
-}
-float radialgradient::getCy() {
-	return cy;
-}
-float radialgradient::getR() {
-	return r;
-}
-float radialgradient::getFx() {
-	return fx;
-}
-float radialgradient::getFy() {
-	return fy;
-}
+
 
 radialgradient::radialgradient() {
 	isLink = false;
-	cx = cy = r = fx = fy = 0;
+	center = point(0.5f, 0.5f);
+	focal = point(0.5f, 0.5f);
+	r = 0.5f;
 }
 
 radialgradient::radialgradient(const radialgradient& radial) {
-	cx = radial.cx;
-	cy = radial.cy;
+	center = radial.center; 
 	r = radial.r;
-	fx = radial.fx;
-	fy = radial.fy;
+	focal = radial.focal;
 }
 radialgradient& radialgradient::operator = (const radialgradient& radial) {
 	if (this != &radial) {
-		cx = radial.cx;
-		cy = radial.cy;
+		center = radial.center;
 		r = radial.r;
-		fx = radial.fx;
-		fy = radial.fy;
+		focal = radial.focal;
 	}
 	return *this;
 }
 
 GradientType radialgradient::getType() {
-	return GradientType::RADIAL; 
+	return GradientType::RADIAL;
 }
 
 /*
 Gdiplus::Brush* radialgradient::createBrush(RectF bounds) {
 	float realCx, realCy, realR;
-    
-    if (this->getUnits() == OBJECT_BOUNDING_BOX) {
-        // Tọa độ tương đối [0,1] -> tuyệt đối
-        realCx = bounds.X + this->getCx() * bounds.Width;
-        realCy = bounds.Y + this->getCy() * bounds.Height;
-        // Bán kính: trung bình cả 2 chiều
-        realR = this->getR() * (bounds.Width + bounds.Height) / 2.0f;
-    } else {
-        realCx = this->getCx();
-        realCy = this->getCy();
-        realR = this->getR();
-    }
-    
-    GraphicsPath pathE;
-    pathE.AddEllipse(RectF(realCx - realR, realCy - realR, realR * 2, realR * 2));
+
+	if (this->getUnits() == OBJECT_BOUNDING_BOX) {
+		// Tọa độ tương đối [0,1] -> tuyệt đối
+		realCx = bounds.X + this->getCx() * bounds.Width;
+		realCy = bounds.Y + this->getCy() * bounds.Height;
+		// Bán kính: trung bình cả 2 chiều
+		realR = this->getR() * (bounds.Width + bounds.Height) / 2.0f;
+	} else {
+		realCx = this->getCx();
+		realCy = this->getCy();
+		realR = this->getR();
+	}
+
+	GraphicsPath pathE;
+	pathE.AddEllipse(RectF(realCx - realR, realCy - realR, realR * 2, realR * 2));
 	PathGradientBrush* fillBrush = new PathGradientBrush(&pathE);
 
 	// Xử lý mốc màu
@@ -118,29 +102,35 @@ Gdiplus::Brush* radialgradient::createBrush(RectF bounds) {
 
 Gdiplus::Brush* radialgradient::createBrush(Gdiplus::RectF bounds) {
 	using namespace Gdiplus;
-	float realCx, realCy, realRx, realRy;
 
-	// --- LOGIC MAPPING TỌA ĐỘ (Giữ nguyên) ---
-	if (this->getUnits() == OBJECT_BOUNDING_BOX) {
-		realCx = bounds.X + this->getCx() * bounds.Width;
-		realCy = bounds.Y + this->getCy() * bounds.Height;
-		realRx = this->getR() * bounds.Width;
-		realRy = this->getR() * bounds.Height;
-	}
-	else {
-		realCx = this->getCx();
-		realCy = this->getCy();
-		realRx = realRy = this->getR();
-	}
+	// --- PHẦN 1: LẤY DỮ LIỆU THÔ (RAW DATA) ---
+	// Không nhân chia gì cả, lấy đúng giá trị parse được
+	float rawCx = this->getCenter().getX();
+	float rawCy = this->getCenter().getY();
+	float rawR = this->getR();
+	float rawFx = this->getFocal().getX();
+	float rawFy = this->getFocal().getY();
 
-	GraphicsPath pathE;
-	pathE.AddEllipse(RectF(realCx - realRx, realCy - realRy, realRx * 2, realRy * 2));
-	PathGradientBrush* fillBrush = new PathGradientBrush(&pathE);
+	// --- PHẦN 2: TẠO PATH CƠ BẢN ---
+	GraphicsPath path;
+	// Tạo một hình tròn dựa trên tâm và bán kính thô
+	path.AddEllipse(rawCx - rawR, rawCy - rawR, rawR * 2, rawR * 2);
 
-	// --- LOGIC STOP MÀU (Giữ nguyên) ---
+	// Tạo Brush từ Path này
+	PathGradientBrush* brush = new PathGradientBrush(&path);
+
+	// Đặt tiêu điểm (Focal Point) - Nơi màu bắt đầu tỏa ra
+	brush->SetCenterPoint(PointF(rawFx, rawFy));
+
+	// --- PHẦN 3: XỬ LÝ MÀU (LOGIC ĐẢO NGƯỢC CHO GDI+) ---
+	// SVG: 0% (Tâm) -> 100% (Biên)
+	// GDI+: 0.0 (Biên) -> 1.0 (Tâm)
+	// => Cần đảo ngược thứ tự stops và công thức tính offset = 1.0 - svgoffset
+
 	vector<stop> ColorOffset = this->getStopVct();
 	int size = ColorOffset.size();
 
+	// (Giữ nguyên logic thêm stop 0 và 1 nếu thiếu của bạn - rất tốt)
 	if (size > 0 && ColorOffset[0].offset != 0) {
 		color first = ColorOffset[0].stopColor;
 		float offset = ColorOffset[0].offset;
@@ -151,70 +141,100 @@ Gdiplus::Brush* radialgradient::createBrush(Gdiplus::RectF bounds) {
 	if (size > 0 && ColorOffset[size - 1].offset != 1) {
 		color last = ColorOffset[size - 1].stopColor;
 		float offset = ColorOffset[size - 1].offset;
-		float safeOffset = (offset == 0) ? 1.0f : offset;
+		float safeOffset = (offset == 0) ? 1.0f : offset; // Tránh chia cho 0
 		color one{ last.r * (1 / safeOffset), last.g * (1 / safeOffset), last.b * (1 / safeOffset), last.opacity * (1 / safeOffset) };
 		ColorOffset.push_back(stop(one, 1));
 		size++;
 	}
 
+	// Convert sang mảng GDI+
 	float* points = new float[size];
 	Color* colors = new Color[size];
+
 	for (int k = 0; k < size; k++) {
-		points[k] = 1.0f - ColorOffset[size - k - 1].offset;
-		colors[k] = Color(ColorOffset[size - k - 1].stopColor.opacity * 255,
-			ColorOffset[size - k - 1].stopColor.r,
-			ColorOffset[size - k - 1].stopColor.g,
-			ColorOffset[size - k - 1].stopColor.b);
+		// Đảo ngược index: SVG[0] là tâm -> GDI+ phải ở cuối (hoặc position = 1.0)
+		// Cách mapping chuẩn nhất cho Radial GDI+:
+		// SVG Offset: x (0->1)  ===> GDI Position: 1.0 - x
+		// Màu cũng phải lấy tương ứng.
+
+		int svgIndex = k;
+
+		// GDI+ yêu cầu mảng points tăng dần từ 0 -> 1 (tức là từ biên vào tâm)
+		// Nên ta gán ngược:
+		// points[0] (Biên) ứng với SVG Offset 1.0 -> GDI pos = 1.0 - 1.0 = 0.0
+		// points[MAX] (Tâm) ứng với SVG Offset 0.0 -> GDI pos = 1.0 - 0.0 = 1.0
+
+		// Để dễ hiểu, ta duyệt ngược từ stop cuối của SVG về đầu
+		int indexFromBack = size - 1 - k;
+
+		points[k] = 1.0f - ColorOffset[indexFromBack].offset;
+
+		colors[k] = Color(
+			ColorOffset[indexFromBack].stopColor.opacity * 255,
+			ColorOffset[indexFromBack].stopColor.r,
+			ColorOffset[indexFromBack].stopColor.g,
+			ColorOffset[indexFromBack].stopColor.b
+		);
 	}
 
-	// --- SỬA LỖI PROBLEM 4: XỬ LÝ TRANSFORM THEO UNITS ---
+	brush->SetInterpolationColors(colors, points, size);
+
+	// --- PHẦN 4: XỬ LÝ MATRIX (Logic chuẩn giống LinearGradient) ---
+	Matrix finalMatrix;
+
+	// A. Apply SVG Transform (rotate, scale, skew...)
 	vector<pair<string, vector<float>>> gradientTrans = this->getGradientTrans();
 	for (int k = 0; k < gradientTrans.size(); ++k) {
 		string type = gradientTrans[k].first;
 		vector<float> val = gradientTrans[k].second;
 
-		if (this->getUnits() == OBJECT_BOUNDING_BOX) {
-			// NẾU LÀ OBJECT BOUNDING BOX: NHÂN VỚI WIDTH/HEIGHT
-			if (type == "translate") {
-				fillBrush->TranslateTransform(val[0] * bounds.Width, val[1] * bounds.Height);
+		// Dùng MatrixOrderPrepend để tác động lên hệ toạ độ Gradient trước
+		if (type == "translate") {
+			float tx = val[0];
+			float ty = (val.size() > 1) ? val[1] : 0;
+			finalMatrix.Translate(tx, ty, MatrixOrderPrepend);
+		}
+		else if (type == "rotate") {
+			float angle = val[0];
+			if (val.size() >= 3) {
+				finalMatrix.RotateAt(angle, PointF(val[1], val[2]), MatrixOrderPrepend);
 			}
-			else if (type == "rotate") {
-				fillBrush->RotateTransform(val[0]);
-			}
-			else if (type == "scale") {
-				fillBrush->ScaleTransform(val[0], val[1]);
-			}
-			else if (type == "matrix") {
-				// Nhân thành phần dịch chuyển (dx, dy) với kích thước bounding box
-				Matrix matrix(val[0], val[1], val[2], val[3],
-					val[4] * bounds.Width,
-					val[5] * bounds.Height);
-				fillBrush->MultiplyTransform(&matrix);
+			else {
+				finalMatrix.Rotate(angle, MatrixOrderPrepend);
 			}
 		}
-		else {
-			// NẾU LÀ USER SPACE: GIỮ NGUYÊN
-			if (type == "translate") {
-				fillBrush->TranslateTransform(val[0], val[1]);
-			}
-			else if (type == "rotate") {
-				fillBrush->RotateTransform(val[0]);
-			}
-			else if (type == "scale") {
-				fillBrush->ScaleTransform(val[0], val[1]);
-			}
-			else if (type == "matrix") {
+		else if (type == "scale") {
+			float sx = val[0];
+			float sy = (val.size() > 1) ? val[1] : sx;
+			finalMatrix.Scale(sx, sy, MatrixOrderPrepend);
+		}
+		else if (type == "matrix") {
+			if (val.size() >= 6) {
 				Matrix matrix(val[0], val[1], val[2], val[3], val[4], val[5]);
-				fillBrush->MultiplyTransform(&matrix);
+				finalMatrix.Multiply(&matrix, MatrixOrderPrepend);
 			}
 		}
 	}
 
-	fillBrush->SetInterpolationColors(colors, points, size);
+	// B. Apply Bounding Box Mapping (Chỉ cho ObjectBoundingBox)
+	if (this->getUnits() == OBJECT_BOUNDING_BOX) {
+		// Ma trận này sẽ:
+		// 1. Scale hình tròn đơn vị (hoặc ellipse đơn vị) thành kích thước bounds
+		// 2. Dịch chuyển nó đến vị trí bounds
+		Matrix boundsMatrix;
+		boundsMatrix.Translate(bounds.X, bounds.Y);
+		boundsMatrix.Scale(bounds.Width, bounds.Height);
+
+		// Append: Áp dụng sau khi đã transform SVG xong
+		finalMatrix.Multiply(&boundsMatrix, MatrixOrderAppend);
+	}
+
+	// --- PHẦN 5: ÁP DỤNG VÀO BRUSH ---
+	brush->SetTransform(&finalMatrix);
 
 	delete[] colors;
 	delete[] points;
-	return fillBrush;
+	return brush;
 }
 /*
 Gdiplus::Brush* radialgradient::createBrush(RectF bounds) {
@@ -383,25 +403,25 @@ void radialgradient::updateElement() {
 		getline(sss, value, '"');
 
 		if (attribute == "cx") {
-			this->cx = parseSVGValue2(value);
+			this->center.x = parseSVGValue2(value);
 		}
 		if (attribute == "cy") {
-			this->cy = parseSVGValue2(value);
+			this->center.y = parseSVGValue2(value);
 		}
 		if (attribute == "r") {
 			this->r = parseSVGValue2(value);
 		}
 		if (attribute == "fx") {
-			this->fx = parseSVGValue2(value);
+			this->focal.x = parseSVGValue2(value);
 		}
 		if (attribute == "fy") {
-			this->fy = parseSVGValue2(value);
+			this->focal.y = parseSVGValue2(value);
 		}
 		if (attribute == "gradientUnits") {
 			if (value == "userSpaceOnUse")
 				this->setUnits(USER_SPACE_ON_USE);
 			else
-				this->setUnits(GradientUnits::OBJECT_BOUNDING_BOX); 
+				this->setUnits(GradientUnits::OBJECT_BOUNDING_BOX);
 		}
 		if (attribute == "gradientTransform") {
 			transformGradient = value;

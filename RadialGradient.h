@@ -3,15 +3,15 @@
 
 class radialgradient : public gradient {
 private:
-	float cx, cy, r, fx, fy;
+	point center; // cx, cy
+	point focal;  // fx, fy
+	float r;      // radius
 	bool isLink;
 
 public:
-	float getCx();
-	float getCy();
-	float getR();
-	float getFx();
-	float getFy();
+	point getCenter() const { return center; }
+	point getFocal() const { return focal; }
+	float getR() const { return r; }
 
 	void updateElement();
 

@@ -8,6 +8,181 @@ SVGPath::SVGPath() : Shape() {
 
 SVGPath::~SVGPath() {}
 
+Gdiplus::RectF SVGPath::getBoundingBox() {
+	float minX = FLT_MAX;
+	float minY = FLT_MAX;
+	float maxX = -FLT_MAX;
+	float maxY = -FLT_MAX;
+
+	// Current point (Điểm hiện tại của con trỏ vẽ)
+	float curX = 0;
+	float curY = 0;
+
+	// Điểm bắt đầu của sub-path (để dùng cho lệnh 'z')
+	float startX = 0;
+	float startY = 0;
+
+	stringstream ss(this->line_str); 
+	char cmd = ' ';
+
+	// Helper lambda để update min/max nhanh
+	auto updateBounds = [&](float x, float y) {
+		if (x < minX) minX = x;
+		if (x > maxX) maxX = x;
+		if (y < minY) minY = y;
+		if (y > maxY) maxY = y;
+		};
+
+	while (ss >> cmd) {
+		// Nếu cmd là số (do file SVG lỗi ko có lệnh lặp lại), ta dùng lại lệnh cũ
+		// Nhưng ở đây ta giả sử parser của bạn đã chuẩn. 
+		// Ta chỉ xét các lệnh chính.
+
+		switch (cmd) {
+		case 'M': { // Move to (Absolute)
+			float x, y; ss >> x >> y;
+			curX = x; curY = y;
+			startX = curX; startY = curY;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'm': { // Move to (Relative)
+			float dx, dy; ss >> dx >> dy;
+			curX += dx; curY += dy;
+			startX = curX; startY = curY;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'L': { // Line to (Absolute)
+			float x, y; ss >> x >> y;
+			curX = x; curY = y;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'l': { // Line to (Relative)
+			float dx, dy; ss >> dx >> dy;
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'H': { // Horizontal Line (Absolute)
+			float x; ss >> x;
+			curX = x;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'h': { // Horizontal Line (Relative)
+			float dx; ss >> dx;
+			curX += dx;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'V': { // Vertical Line (Absolute)
+			float y; ss >> y;
+			curY = y;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'v': { // Vertical Line (Relative)
+			float dy; ss >> dy;
+			curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'C': { // Cubic Bezier (Absolute) - 3 điểm (cp1, cp2, end)
+			float x1, y1, x2, y2, x, y;
+			ss >> x1 >> y1 >> x2 >> y2 >> x >> y;
+			updateBounds(x1, y1); // Control point 1
+			updateBounds(x2, y2); // Control point 2
+			curX = x; curY = y;
+			updateBounds(curX, curY); // End point
+			break;
+		}
+		case 'c': { // Cubic Bezier (Relative)
+			float dx1, dy1, dx2, dy2, dx, dy;
+			ss >> dx1 >> dy1 >> dx2 >> dy2 >> dx >> dy;
+			updateBounds(curX + dx1, curY + dy1);
+			updateBounds(curX + dx2, curY + dy2);
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'S': { // Smooth Cubic (Absolute) - 2 điểm (cp2, end)
+			// Logic chuẩn SVG: cp1 là đối xứng của cp2 trước đó. 
+			// Ở đây ta đơn giản hoá: cứ lấy bounds của các điểm được khai báo.
+			float x2, y2, x, y;
+			ss >> x2 >> y2 >> x >> y;
+			updateBounds(x2, y2);
+			curX = x; curY = y;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 's': { // Smooth Cubic (Relative)
+			float dx2, dy2, dx, dy;
+			ss >> dx2 >> dy2 >> dx >> dy;
+			updateBounds(curX + dx2, curY + dy2);
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'Q': { // Quadratic Bezier (Absolute) - 2 điểm (cp, end)
+			float x1, y1, x, y;
+			ss >> x1 >> y1 >> x >> y;
+			updateBounds(x1, y1);
+			curX = x; curY = y;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'q': { // Quadratic Bezier (Relative)
+			float dx1, dy1, dx, dy;
+			ss >> dx1 >> dy1 >> dx >> dy;
+			updateBounds(curX + dx1, curY + dy1);
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'A': { // Arc Absolute
+			float rx, ry, rot, large, sweep, x, y;
+			ss >> rx >> ry >> rot >> large >> sweep >> x >> y;
+			curX = x; curY = y;
+			updateBounds(curX, curY); // Cập nhật bounds theo điểm đích
+			break;
+		}
+		case 'a': { // Arc Relative
+			float rx, ry, rot, large, sweep, dx, dy;
+			ss >> rx >> ry >> rot >> large >> sweep >> dx >> dy;
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'T': {
+			float x, y; ss >> x >> y;
+			curX = x; curY = y;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 't': {
+			float dx, dy; ss >> dx >> dy;
+			curX += dx; curY += dy;
+			updateBounds(curX, curY);
+			break;
+		}
+		case 'Z':
+		case 'z': {
+			curX = startX;
+			curY = startY;
+			break;
+		}
+				// Có thể thêm T, t, A, a nếu cần, nhưng cơ bản C, L, M là 90% các hình rồi.
+		}
+	}
+
+	// Nếu không tìm thấy điểm nào (path rỗng), trả về 0
+	if (minX == FLT_MAX) return Gdiplus::RectF(0, 0, 0, 0);
+
+	return Gdiplus::RectF(minX, minY, maxX - minX, maxY - minY);
+}
+
 void SVGPath::updateProperty() {
 	ofstream ofs("test.txt", ios::out);
 	stringstream ss(line_str);
@@ -826,15 +1001,15 @@ void SVGPath::draw(Graphics& graphics) {
 		graphics.Restore(save);
 	}
 	else {
-		RectF bounds;
-		path.GetBounds(&bounds);
+		RectF bounds = this->getBoundingBox();
+		//path.GetBounds(&bounds);
 
 		Brush* fillBrush = this->getGrad()->createBrush(bounds);
 
 		if (grad->getType() == RADIAL) {
 			radialgradient* radial = dynamic_cast<radialgradient*>(grad);
-			float cx = radial->getCx();
-			float cy = radial->getCy();
+			float cx = radial->getCenter().x; 
+			float cy = radial->getCenter().y;
 			float r = radial->getR();
 
 			GraphicsPath pathE;

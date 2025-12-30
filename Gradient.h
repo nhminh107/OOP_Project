@@ -38,7 +38,7 @@ public:
 	void setStopVct(vector<stop>);
 	void setStrLine(string);
 	void setGradId(int);
-	virtual GradientType getType() = 0; 
+	virtual GradientType getType() = 0;
 	void addStop(stop);
 	void updateGradientTransform(string);
 	virtual void updateElement();
@@ -48,6 +48,8 @@ public:
 	virtual Gdiplus::Brush* createBrush(Gdiplus::RectF bounds) = 0;
 	void setUnits(GradientUnits u) { units = u; }
 	GradientUnits getUnits() { return units; }
+
+	void getMatrixFromVector(const vector<pair<string, vector<float>>>& transVct, Gdiplus::Matrix* matrix);
 	~gradient();
 };
 

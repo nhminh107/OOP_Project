@@ -1,4 +1,5 @@
-#include "Library.h"
+﻿#include "Library.h"
+
 
 vector<stop> gradient::getStopVct() {
 	return this->stopVct;
@@ -25,22 +26,69 @@ gradient::gradient() {
 }
 
 gradient::gradient(const gradient& grad) {
-	for (int i = 0; i < stopVct.size(); i++) {
-		stopVct[i] = grad.stopVct[i];
-	}
+	this->stopVct = grad.stopVct;
+	this->gradId = grad.gradId;
+	this->gradientTrans = grad.gradientTrans;
+	this->strLine = grad.strLine;
 }
 
-gradient& gradient::operator = (const gradient& grad) {
+gradient& gradient::operator=(const gradient& grad) {
 	if (this != &grad) {
-		for (int i = 0; i < stopVct.size(); i++) {
-			stopVct[i] = grad.stopVct[i];
-		}
+		this->stopVct = grad.stopVct;
+		this->gradId = grad.gradId;
+		this->gradientTrans = grad.gradientTrans;
+		this->strLine = grad.strLine;
 	}
 	return *this;
 }
 
 vector<pair<string, vector<float>>> gradient::getGradientTrans() {
 	return this->gradientTrans;
+}
+
+
+void gradient::getMatrixFromVector(const vector<pair<string, vector<float>>>& transVct, Gdiplus::Matrix* matrix) {
+	using namespace Gdiplus;
+
+	// Matrix khởi tạo là Identity.
+	// SVG Transform list: "A B C" -> Thực hiện A, rồi B, rồi C.
+	// GDI+ Append: [New] * [Old] (sai) hay [Old] * [New] (đúng)?
+	// GDI+ Append: Result = OldMatrix * NewMatrix.
+	// Ví dụ: Đang có A. Append B -> A * B. Đúng theo chuẩn SVG.
+
+	for (const auto& trans : transVct) {
+		string type = trans.first;
+		const vector<float>& args = trans.second;
+
+		if (type == "translate") {
+			float x = args.size() > 0 ? args[0] : 0;
+			float y = args.size() > 1 ? args[1] : 0;
+			matrix->Translate(x, y, MatrixOrderAppend); // SỬA THÀNH APPEND
+		}
+		else if (type == "rotate") {
+			if (args.size() > 0) {
+				float angle = args[0];
+				if (args.size() == 3) {
+					// rotate(angle, cx, cy) = translate(cx, cy) * rotate(angle) * translate(-cx, -cy)
+					matrix->RotateAt(angle, PointF(args[1], args[2]), MatrixOrderAppend);
+				}
+				else {
+					matrix->Rotate(angle, MatrixOrderAppend);
+				}
+			}
+		}
+		else if (type == "scale") {
+			float sx = args.size() > 0 ? args[0] : 1;
+			float sy = args.size() > 1 ? args[1] : sx;
+			matrix->Scale(sx, sy, MatrixOrderAppend);
+		}
+		else if (type == "matrix") {
+			if (args.size() >= 6) {
+				Matrix m(args[0], args[1], args[2], args[3], args[4], args[5]);
+				matrix->Multiply(&m, MatrixOrderAppend);
+			}
+		}
+	}
 }
 
 void gradient::updateGradientTransform(string str) {

@@ -14,12 +14,13 @@ public:
 	string getStrokeLineJoin();
 	string getStrokeLineCap();
 	string getFillRule();
-
+	RectF getTightBounds();
 	void setStrokeLineJoin(string);
 	void setStrokeLineCap(string);
 	void setFillRule(string);
+	Gdiplus::RectF getBoundingBox();
 	void setVct(vector<pair<char, vector<float>>>);
-	void draw(Graphics& graphics) override; 
+	void draw(Graphics& graphics) override;
 	void updateProperty();
 };
 
