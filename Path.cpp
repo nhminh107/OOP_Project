@@ -567,6 +567,8 @@ void SVGPath::updateProperty() {
 //}
 void SVGPath::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
+
+	// --- BƯỚC 1: XÂY DỰNG PATH TRƯỚC (để tính bounds gốc) ---
 	vector<pair<char, vector<float>>> vct = this->getProp();
 	FillMode fillMode;
 	if (this->fillRule == "evenodd")
@@ -582,9 +584,9 @@ void SVGPath::draw(Graphics& graphics) {
 			if (grad == NULL) {
 				path.StartFigure();
 				if (numPoint == 4) {
-					PointF P0 = PointF(vct[i].second[0], vct[i].second[1]);
+					PointF P0_temp = PointF(vct[i].second[0], vct[i].second[1]);
 					PointF P1 = PointF(vct[i].second[2], vct[i].second[3]);
-					path.AddLine(P0, P1);
+					path.AddLine(P0_temp, P1);
 					P0 = P1;
 				}
 				else if (numPoint > 4) {
@@ -609,7 +611,6 @@ void SVGPath::draw(Graphics& graphics) {
 				}
 			}
 		}
-
 		else if (vct[i].first == 'Q' || vct[i].first == 'q' || vct[i].first == 'T' || vct[i].first == 't') {
 			int j = 0;
 			while (numPoint > 3) {
@@ -621,7 +622,6 @@ void SVGPath::draw(Graphics& graphics) {
 				j += 4;
 			}
 		}
-
 		else if (vct[i].first == 'C' || vct[i].first == 'c') {
 			int j = 0;
 			while (numPoint > 5) {
@@ -634,7 +634,6 @@ void SVGPath::draw(Graphics& graphics) {
 				j += 6;
 			}
 		}
-
 		else if (vct[i].first == 'S' || vct[i].first == 's') {
 			int j = 0;
 			while (numPoint > 3) {
@@ -659,7 +658,6 @@ void SVGPath::draw(Graphics& graphics) {
 				j += 4;
 			}
 		}
-
 		else if (vct[i].first == 'A' || vct[i].first == 'a') {
 			int j = 0;
 			while (numPoint > 6) {
@@ -678,70 +676,47 @@ void SVGPath::draw(Graphics& graphics) {
 						double angle = xAR * Pi / 180.f;
 						double cosAngle = cos(angle);
 						double sinAngle = sin(angle);
-
 						double a = (sx - ex) / 2.f;
 						double b = (sy - ey) / 2.f;
-
 						double x1 = cosAngle * a + sinAngle * b;
 						double y1 = -sinAngle * a + cosAngle * b;
-
 						rx = abs(rx);
 						ry = abs(ry);
-
 						double lambda = (x1 * x1) / (rx * rx) + (y1 * y1) / (ry * ry);
 						if (lambda > 1.f) {
 							rx *= sqrt(lambda);
 							ry *= sqrt(lambda);
 						}
-
 						double sign = (lAF == sF ? -1.f : 1.f);
 						double num = rx * rx * ry * ry - rx * rx * y1 * y1 - ry * ry * x1 * x1;
 						double den = rx * rx * y1 * y1 + ry * ry * x1 * x1;
-						if (num < 0)
-							num = 0;
-
+						if (num < 0) num = 0;
 						double x2 = sign * sqrt(num / den) * rx * y1 / ry;
 						double y2 = -sign * sqrt(num / den) * ry * x1 / rx;
-
 						double x = cosAngle * x2 - sinAngle * y2 + ((sx + ex) / 2.f);
 						double y = sinAngle * x2 + cosAngle * y2 + ((sy + ey) / 2.f);
-
 						a = (x1 - x2) / rx;
 						b = (y1 - y2) / ry;
 						double c = (-x1 - x2) / rx;
 						double d = (-y1 - y2) / ry;
-
-						if (b < 0)
-							sign = -1.f;
+						if (b < 0) sign = -1.f;
 						else sign = 1.f;
 						double temp = a / sqrt(a * a + b * b);
-						if (temp < -1.f)
-							temp = -1.f;
-						else if (temp > 1.f)
-							temp = 1.f;
+						if (temp < -1.f) temp = -1.f;
+						else if (temp > 1.f) temp = 1.f;
 						double startAngle = sign * acos(temp);
-
-						if (a * d - b * c < 0)
-							sign = -1.f;
+						if (a * d - b * c < 0) sign = -1.f;
 						else sign = 1.f;
 						temp = (a * c + b * d) / (sqrt(a * a + b * b) * sqrt(c * c + d * d));
-						if (temp < -1.f)
-							temp = -1.f;
-						else if (temp > 1.f)
-							temp = 1.f;
+						if (temp < -1.f) temp = -1.f;
+						else if (temp > 1.f) temp = 1.f;
 						double dentaAngle = sign * acos(temp);
-
-						if (sF == 0 && dentaAngle > 0)
-							dentaAngle -= (2.f * Pi);
-						else if (sF == 1 && dentaAngle < 0)
-							dentaAngle += (2.f * Pi);
-
+						if (sF == 0 && dentaAngle > 0) dentaAngle -= (2.f * Pi);
+						else if (sF == 1 && dentaAngle < 0) dentaAngle += (2.f * Pi);
 						double ratio = abs(dentaAngle) / (Pi / 2.f);
-						if (abs(1.f - ratio) < 0.0000001)
-							ratio = 1.f;
+						if (abs(1.f - ratio) < 0.0000001) ratio = 1.f;
 						int segments = max(static_cast<int>(ceil(ratio)), 1);
 						dentaAngle /= segments;
-
 						vector<vector<vector<double>>> curves;
 						vector<vector<double>> curve;
 						for (int t = 0; t < segments; t++) {
@@ -757,13 +732,11 @@ void SVGPath::draw(Graphics& graphics) {
 							curve.clear();
 							startAngle += dentaAngle;
 						}
-
 						for (auto& cur : curves) {
 							auto mapped_curve_0 = { (cosAngle * cur[0][0] * rx - sinAngle * cur[0][1] * ry) + x,(sinAngle * cur[0][0] * rx + cosAngle * cur[0][1] * ry) + y };
 							auto mapped_curve_1 = { (cosAngle * cur[1][0] * rx - sinAngle * cur[1][1] * ry) + x,(sinAngle * cur[1][0] * rx + cosAngle * cur[1][1] * ry) + y };
 							auto mapped_curve_2 = { (cosAngle * cur[2][0] * rx - sinAngle * cur[2][1] * ry) + x,(sinAngle * cur[2][0] * rx + cosAngle * cur[2][1] * ry) + y };
 							cur = { mapped_curve_0, mapped_curve_1, mapped_curve_2 };
-
 							for (size_t i = 0; i < cur.size(); i += 3) {
 								if (i + 2 < cur.size()) {
 									PointF P1(cur[i][0], cur[i][1]);
@@ -774,7 +747,6 @@ void SVGPath::draw(Graphics& graphics) {
 								}
 							}
 						}
-
 						P0 = PointF(ex, ey);
 						numPoint -= 7;
 						j += 7;
@@ -782,7 +754,6 @@ void SVGPath::draw(Graphics& graphics) {
 				}
 			}
 		}
-
 		else if (vct[i].first == 'L' || vct[i].first == 'H' || vct[i].first == 'V' || vct[i].first == 'l' || vct[i].first == 'h' || vct[i].first == 'v') {
 			int j = 0;
 			while (numPoint > 1) {
@@ -793,109 +764,92 @@ void SVGPath::draw(Graphics& graphics) {
 				j += 2;
 			}
 		}
-
 		else if (vct[i].first == 'Z' || vct[i].first == 'z')
 			path.CloseFigure();
 	}
 
-	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
-	gradient* grad = this->grad;
+	// === FIX CHÍNH: LẤY BOUNDS TRƯỚC KHI ÁP DỤNG TRANSFORM ===
+	RectF originalBounds;
+	path.GetBounds(&originalBounds);
 
-	if (grad == NULL) {
-		Pen penPath(Color(this->getStroke().getStrokeColor().opacity * 255, this->getStroke().getStrokeColor().r, this->getStroke().getStrokeColor().g, this->getStroke().getStrokeColor().b), this->getStroke().getStrokeWidth());
-		SolidBrush fillPath(Color(this->getColor().opacity * 255, this->getColor().r, this->getColor().g, this->getColor().b));
-		vector<pair<string, vector<float>>> transVct = this->getTransVct();
-
-		for (auto trans : transVct) {
-			float x = 0.0f;
-			if (!trans.second.empty())
-				x = trans.second[0];
-			float y = x;
-			if (trans.second.size() == 2)
-				y = trans.second[1];
-			if (trans.first == "translate")
-				graphics.TranslateTransform(x, y);
-			else if (trans.first == "rotate")
-				graphics.RotateTransform(x);
-			else graphics.ScaleTransform(x, y);
-		}
-
-		graphics.SetSmoothingMode(SmoothingModeAntiAlias);
-		graphics.FillPath(&fillPath, &path);
-		graphics.DrawPath(&penPath, &path);
-		graphics.Restore(save);
-	}
-	else {
-		RectF bounds;
-		path.GetBounds(&bounds);
-
-		Brush* fillBrush = this->getGrad()->createBrush(bounds);
-
-		if (grad->getType() == RADIAL) {
-			radialgradient* radial = dynamic_cast<radialgradient*>(grad);
-			float cx = radial->getCx();
-			float cy = radial->getCy();
-			float r = radial->getR();
-
-			GraphicsPath pathE;
-			pathE.AddEllipse(RectF(cx - r, cy - r, r * 2, r * 2));
-
-			// Áp dụng transform vào ellipse của vùng loại trừ nếu có
-			vector<pair<string, vector<float>>> gradientTrans = radial->getGradientTrans();
-			for (int k = 0; k < gradientTrans.size(); ++k) {
-				if (gradientTrans[k].first == "matrix") {
-					Matrix matrix(
-						gradientTrans[k].second[0], gradientTrans[k].second[1], gradientTrans[k].second[2],
-						gradientTrans[k].second[3], gradientTrans[k].second[4], gradientTrans[k].second[5]
-					);
-					pathE.Transform(&matrix);
-				}
-			}
-
-			Color it = Color(
-				radial->getStopVct()[radial->getStopVct().size() - 1].stopColor.opacity * 255,
-				radial->getStopVct()[radial->getStopVct().size() - 1].stopColor.r,
-				radial->getStopVct()[radial->getStopVct().size() - 1].stopColor.g,
-				radial->getStopVct()[radial->getStopVct().size() - 1].stopColor.b);
-
-			SolidBrush solidBrush(it);
-			Region region(&path);
-			region.Exclude(&pathE);
-
-			graphics.FillPath(fillBrush, &path);
-			graphics.FillRegion(&solidBrush, &region);
-		}
-		else {
-			graphics.FillPath(fillBrush, &path);
-		}
-
-		// Xử lý transform của Shape (Phần cuối của else)
-		vector<pair<string, vector<float>>> transVct = this->getTransVct();
-		for (auto trans : transVct) {
-			float x = 0.0f;
-			if (!trans.second.empty())
-				x = trans.second[0];
-			float y = x;
-			if (trans.second.size() == 2)
-				y = trans.second[1];
-			if (trans.first == "translate")
-				graphics.TranslateTransform(x, y);
-			else if (trans.first == "rotate")
-				graphics.RotateTransform(x);
-			else if (trans.first == "scale")
-				graphics.ScaleTransform(x, y);
-			else if (trans.first == "matrix") {
+	// --- BƯỚC 2: ÁP DỤNG TRANSFORM SAU KHI ĐÃ TÍNH BOUNDS ---
+	vector<pair<string, vector<float>>> transVct = this->getTransVct();
+	for (auto trans : transVct) {
+		float x = 0.0f;
+		if (!trans.second.empty())
+			x = trans.second[0];
+		float y = x;
+		if (trans.second.size() == 2)
+			y = trans.second[1];
+		if (trans.first == "translate")
+			graphics.TranslateTransform(x, y);
+		else if (trans.first == "rotate")
+			graphics.RotateTransform(x);
+		else if (trans.first == "scale")
+			graphics.ScaleTransform(x, y);
+		else if (trans.first == "matrix") {
+			if (trans.second.size() >= 6) {
 				Matrix matrix(
 					trans.second[0], trans.second[1], trans.second[2],
 					trans.second[3], trans.second[4], trans.second[5]
 				);
-				graphics.SetTransform(&matrix);
+				graphics.MultiplyTransform(&matrix);
 			}
+		}
+	}
+
+	// --- BƯỚC 3: VẼ VỚI BOUNDS GỐC ---
+	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
+	gradient* grad = this->grad;
+
+	if (grad == NULL) {
+		// Không có Gradient
+		Pen penPath(Color(this->getStroke().getStrokeColor().opacity * 255, this->getStroke().getStrokeColor().r, this->getStroke().getStrokeColor().g, this->getStroke().getStrokeColor().b), this->getStroke().getStrokeWidth());
+		SolidBrush fillPath(Color(this->getColor().opacity * 255, this->getColor().r, this->getColor().g, this->getColor().b));
+
+		graphics.FillPath(&fillPath, &path);
+		graphics.DrawPath(&penPath, &path);
+	}
+	else {
+		// Có Gradient - SỬ DỤNG originalBounds thay vì tính lại
+		Brush* fillBrush = this->getGrad()->createBrush(originalBounds);
+
+		if (grad->getType() == RADIAL) {
+			radialgradient* radial = dynamic_cast<radialgradient*>(grad);
+
+			// Lấy màu ngoài cùng
+			vector<stop> stops = radial->getStopVct();
+			Color outerColor;
+			if (!stops.empty()) {
+				stop lastStop = stops[stops.size() - 1];
+				outerColor = Color(
+					lastStop.stopColor.opacity * 255,
+					lastStop.stopColor.r,
+					lastStop.stopColor.g,
+					lastStop.stopColor.b
+				);
+			}
+			else {
+				outerColor = Color(255, 255, 255, 255);
+			}
+
+			SolidBrush solidBrush(outerColor);
+
+			// Vẽ lớp nền
+			graphics.FillPath(&solidBrush, &path);
+
+			// Vẽ gradient đè lên
+			graphics.FillPath(fillBrush, &path);
+		}
+		else {
+			// Linear Gradient
+			graphics.FillPath(fillBrush, &path);
 		}
 
 		delete fillBrush;
-		graphics.Restore(save);
 	}
+
+	graphics.Restore(save);
 }
 /*
 void SVGPath::draw(Graphics& graphics) {
