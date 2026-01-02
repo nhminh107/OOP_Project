@@ -241,7 +241,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     float svgW = (g_vb) ? g_vb->getViewWidth() : 0;
     float svgH = (g_vb) ? g_vb->getViewHeight() : 0;
 
-    float autoScale = 1.0f;
+    float autoScale = 4.5f;
     if (svgW > 0 && svgH > 0 && WinW > 0 && WinH > 0) {
         float sx = WinW / svgW;
         float sy = WinH / svgH;
@@ -268,11 +268,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEWHEEL:
         if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) scale *= 1.1f;
-        else scale *= 0.9f;
+        else scale *= 0.92f;
         InvalidateRect(hWnd, NULL, TRUE);
         break;
 
-        // ĐÃ BỎ CASE WM_LBUTTONDOWN ĐỂ TRÁNH LỖI SELECT
 
     case WM_PAINT:
     {
