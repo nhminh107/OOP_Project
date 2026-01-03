@@ -18,7 +18,7 @@ public:
 	void setWidth(float);
 	void setHeight(float);
 	void updateProperty();
-	void draw(Graphics&) override;
+	void draw(Graphics&) override;	
 };
 
 #endif

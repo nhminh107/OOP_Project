@@ -31,57 +31,54 @@ void SVGRectangle::updateProperty() {
 	}
 }
 void SVGRectangle::draw(Graphics& graphics) {
-	// 1. Lưu trạng thái Graphics
-	GraphicsState save = graphics.Save();
+    //Luu trang thai
+    GraphicsState save = graphics.Save();
 
-	// 2. Tạo bút vẽ (Pen) cho viền
-	Pen penRectangle(Color(this->getStroke().getStrokeColor().opacity * 255,
-		this->getStroke().getStrokeColor().r,
-		this->getStroke().getStrokeColor().g,
-		this->getStroke().getStrokeColor().b),
-		this->getStroke().getStrokeWidth());
+    //Ap dung transform
+    Matrix transform;
+    this->getTransformMatrix(&transform);
+    graphics.MultiplyTransform(&transform);
 
-	// 3. Tạo cọ tô màu (Brush) cho phần nền
-	SolidBrush fillRectangle(Color(this->getColor().opacity * 255,
-		this->getColor().r,
-		this->getColor().g,
-		this->getColor().b));
+    //Tinh bounding box
+    RectF bound(
+        this->getRoot().getX(),
+        this->getRoot().getY(),
+        this->getWidth(),
+        this->getHeight()
+    );
 
-	// 4. Xử lý các phép biến đổi (Translate, Rotate, Scale, Matrix)
-	vector<pair<string, vector<float>>> transVct = this->getTransVct();
+    //Chuan bi brush
+    Brush* fillBrush = nullptr;
 
-	for (auto trans : transVct) {
-		float x = 0.0f;
-		if (!trans.second.empty())
-			x = trans.second[0];
+    gradient* grad = this->getGrad();
+    if (grad) {
+        //Neu co gradient
+        fillBrush = grad->createBrush(bound);
+    }
+    else {
+        //Neu khong co gradient
+        fillBrush = new SolidBrush(
+            Color(this->getColor().opacity * 255,this->getColor().r,this->getColor().g,this->getColor().b)
+        );
+    }
 
-		float y = x;
-		if (trans.second.size() == 2)
-			y = trans.second[1];
+    //Pen
+    stroke s = this->getStroke();
+    Pen pen(
+        Color(
+            s.getStrokeColor().opacity * 255,s.getStrokeColor().r,s.getStrokeColor().g,s.getStrokeColor().b)
+            , s.getStrokeWidth()
+    );
 
-		if (trans.first == "translate")
-			graphics.TranslateTransform(x, y);
-		else if (trans.first == "rotate")
-			graphics.RotateTransform(x);
-		else if (trans.first == "scale")
-			graphics.ScaleTransform(x, y);
-		else if (trans.first == "matrix") {
-			if (trans.second.size() >= 6) {
-				Matrix matrix(trans.second[0], trans.second[1], trans.second[2],
-					trans.second[3], trans.second[4], trans.second[5]);
-				graphics.MultiplyTransform(&matrix);
-			}
-		}
-	}
+    graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
+    //Draw
+    graphics.FillRectangle(fillBrush, bound);
+    graphics.DrawRectangle(&pen, bound);
 
-
-	graphics.FillRectangle(&fillRectangle, this->getRoot().getX(), this->getRoot().getY(), this->getWidth(), this->getHeight());
-	graphics.DrawRectangle(&penRectangle, this->getRoot().getX(), this->getRoot().getY(), this->getWidth(), this->getHeight());
-
-	// 7. Khôi phục trạng thái
-	graphics.Restore(save);
+    //Delete
+    delete fillBrush;
+    graphics.Restore(save);
 }
 point SVGRectangle::getRoot() {
 	return this->root;
