@@ -13,28 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{d704aac5-35a0-41a9-a158-11246d7f26c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SVG_Reader.cpp">
+    <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="Parser.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Circle.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ellipse.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Polyline.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>Source Files</Filter>
@@ -42,85 +30,153 @@
     <ClCompile Include="Parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Group.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Circle.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Path.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Color.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Ellipse.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeFactory.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\FileExplorer.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Color.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Gradient.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Point.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Group.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Polygon.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Image.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Rectangle.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="src\Line.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\LinearGradient.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Parser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Parser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Path.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Point.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Polygon.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Polyline.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RadialGradient.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rectangle.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shape.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShapeFactory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SVG_Reader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Text.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Viewbox.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WindowApp.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Library.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Circle.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Parser.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Color.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Render.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Ellipse.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\FileExplorer.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Gradient.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Circle.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Group.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Ellipse.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Image.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Polyline.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Library.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Group.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Line.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Path.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\LinearGradient.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeFactory.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Parser.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Point.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Path.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Point.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Polygon.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="Polygon.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Polyline.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RadialGradient.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rectangle.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shape.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShapeFactory.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Text.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Viewbox.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowApp.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Color.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="favicon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
