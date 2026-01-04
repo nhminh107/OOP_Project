@@ -158,7 +158,7 @@ LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         float contentLeft = cardX + 80;
 
         // C. MỤC 1: CAMERA
-        graphics.DrawString(L"🎮 ĐIỀU KHIỂN CAMERA:", -1, &headerFont, PointF(contentLeft, currentY), &headerBrush);
+        graphics.DrawString(L"\u2699 ĐIỀU KHIỂN CAMERA:", -1, &headerFont, PointF(contentLeft, currentY), &headerBrush);
         currentY += 30;
 
         wstring controls = L"• Phím 'I' / 'O': Phóng to / Thu nhỏ\n"
@@ -169,7 +169,7 @@ LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         currentY += 100;
 
         // D. MỤC 2: LƯU Ý
-        graphics.DrawString(L"💡 LƯU Ý QUAN TRỌNG:", -1, &headerFont, PointF(contentLeft, currentY), &headerBrush);
+        graphics.DrawString(L"\uE110 LƯU Ý QUAN TRỌNG:", -1, &headerFont, PointF(contentLeft, currentY), &headerBrush);
         currentY += 30;
 
         wstring notes = L"• Lăn chuột để Zoom nhanh hơn.\n"
