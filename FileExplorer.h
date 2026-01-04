@@ -4,11 +4,9 @@ class FileExplorer {
 private:
 
 public:
-
     // --- HÀM PHỤ TRỢ: MỞ HỘP THOẠI WINDOWS ---
     static bool OpenFileDialog(string& selectedPath);
-
-
+    bool SaveFileDialog(string& selectedPath);
 };
 
 #endif
