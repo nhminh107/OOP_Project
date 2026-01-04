@@ -72,7 +72,7 @@ float scale = 1.0f;
 float Rotate = 0.0f;
 float scroll_x = 0.0f;
 float scroll_y = 0.0f;
-
+bool g_ShowGrid = false;
 string g_InputFileName = "";
 image* g_pImg = nullptr;
 viewbox* g_vb = nullptr;
@@ -202,6 +202,30 @@ LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     return 0;
 }
 
+void DrawGrid(Graphics& graphics, float w, float h) {
+    
+    // 1. Cấu hình bút vẽ lưới (Màu xám nhạt)
+    Pen gridPen(Color(80, 180, 180, 180), 1);
+    gridPen.SetDashStyle(DashStyleDot); // Nét chấm
+
+    Pen axisPen(Color(150, 100, 100, 100), 2);
+
+    float step = 50.0f; 
+    float range = 10000.0f; //t giả lập cứng là 10000 cho nó hết cái khung, w với h không dùng
+
+    for (float x = -range; x <= range; x += step) {
+        if (x == 0) continue;
+        graphics.DrawLine(&gridPen, x, -range, x, range);
+    }
+    for (float y = -range; y <= range; y += step) {
+        if (y == 0) continue;
+        graphics.DrawLine(&gridPen, -range, y, range, y);
+    }
+
+    graphics.DrawLine(&axisPen, 0.0f, -range, 0.0f, range); // Trục tung (Y)
+    graphics.DrawLine(&axisPen, -range, 0.0f, range, 0.0f); // Trục hoành (X)
+}
+
 void ShowWelcomeWindow(HINSTANCE hInstance) {
     WNDCLASSEXW wcex = { 0 };
     wcex.cbSize = sizeof(WNDCLASSEX);
@@ -261,6 +285,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case 'O': case 'o': scale *= 0.9f; break;
         case 'R': case 'r': Rotate += 5.0f; break;
         case 'L': case 'l': Rotate -= 5.0f; break;
+        case 'G': case 'g':
+            g_ShowGrid = !g_ShowGrid; // Đảo trạng thái
+            InvalidateRect(hWnd, NULL, TRUE); // Yêu cầu vẽ lại
+            break;
         case 'D': case 'd': scale = 1.0f; Rotate = 0.0f; scroll_x = 0; scroll_y = 0; break;
         }
         InvalidateRect(hWnd, NULL, TRUE); // Vẽ lại màn hình
@@ -286,6 +314,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             graphics.TranslateTransform(scroll_x, scroll_y);
             graphics.RotateTransform(Rotate);
             graphics.ScaleTransform(totalScale, totalScale);
+
+            if (g_ShowGrid && g_vb) {
+                // Lấy kích thước ViewBox để vẽ lưới vừa khít
+                float gridW = g_vb->getViewWidth();
+                float gridH = g_vb->getViewHeight();
+
+                // Nếu viewbox chưa set (ví dụ file lỗi), dùng kích thước mặc định to to chút
+                if (gridW == 0) gridW = 2000;
+                if (gridH == 0) gridH = 2000;
+
+                DrawGrid(graphics, gridW, gridH);
+            }
 
             renderer renderTool;
             g_pImg->renderImage(renderTool, graphics);
