@@ -1,4 +1,4 @@
-#include "Library.h"
+﻿#include "Library.h"
 
 SVGText::SVGText() :Shape() {
 	textPos.setX(0);
@@ -32,10 +32,10 @@ void SVGText::updateProperty() {
 			this->textPos.setX(stof(val));
 		if (attribute == "y")
 			this->textPos.setY(stof(val));
-		if (attribute == "font-size")
-			this->fontSize = stof(val);
 		if (attribute == "text-anchor")
 			this->textAnchor = val;
+		if (attribute == "font-size")
+			this->fontSize = stof(val);
 		if (attribute == "font-family") {
 			if (val.find("Time") == string::npos)
 				this->fontFamily = val;
@@ -52,57 +52,92 @@ void SVGText::updateProperty() {
 
 void SVGText::draw(Graphics& graphics) {
 	GraphicsState save = graphics.Save();
+
+	// 1. Chuẩn bị nội dung và Font
 	wstring_convert<codecvt_utf8<wchar_t>> converter;
 	wstring wContent = converter.from_bytes(this->getContent());
 	wstring wFontFamily = converter.from_bytes(this->getFontFamily());
-	FontFamily WFF = wFontFamily.c_str();
+	FontFamily WFF(wFontFamily.c_str());
+
+	// 2. Lấy các thông số kích thước cơ bản để tính toán tọa độ
+	float fSize = this->getFontSize();
+	float baseX = this->getTextPos().getX() + this->getDx();
+	float baseY = this->getTextPos().getY() + this->getDy();
 
 	PointF textPosition;
 	StringFormat stringFormat;
-	if (this->getTextAnchor() == "middle") {
-		textPosition = PointF(this->getTextPos().getX() + this->getDx() - this->getFontSize() / 25, this->getTextPos().getY() + this->getDy() - this->getFontSize() / 4);
+	string anchor = this->getTextAnchor();
+
+	// 3. Xử lý căn lề (Text Anchor) và tính tọa độ vẽ
+	if (anchor == "middle") {
+		textPosition = PointF(baseX - fSize / 25.0f, baseY - fSize / 4.0f);
 		stringFormat.SetAlignment(StringAlignmentCenter);
 		stringFormat.SetLineAlignment(StringAlignmentCenter);
 	}
-	else if (this->getTextAnchor() == "end") {
-		textPosition = PointF(this->getTextPos().getX() + this->getDx() + this->getFontSize() / 6.5, this->getTextPos().getY() + this->getDy() + this->getFontSize() / 2.8);
+	else if (anchor == "end") {
+		textPosition = PointF(baseX + fSize / 6.5f, baseY + fSize / 2.8f);
 		stringFormat.SetAlignment(StringAlignmentFar);
 		stringFormat.SetLineAlignment(StringAlignmentFar);
 	}
-	else {
-		textPosition = PointF(this->getTextPos().getX() + this->getDx() - this->getFontSize() / 7, this->getTextPos().getY() + this->getDy() - this->getFontSize() / 1.2);
+	else { // "start" hoặc mặc định
+		textPosition = PointF(baseX - fSize / 7.0f, baseY - fSize / 1.2f);
 		stringFormat.SetAlignment(StringAlignmentNear);
 		stringFormat.SetLineAlignment(StringAlignmentNear);
 	}
 
+	// 4. Xác định kiểu Font (Bold/Italic/Regular)
+	INT fontStyle = FontStyleRegular;
+	string styleStr = this->getFontStyle();
+	if (styleStr == "italic") {
+		fontStyle = FontStyleItalic;
+	}
+	else if (styleStr == "bold") {
+		fontStyle = FontStyleBold;
+	}
+
+	// 5. Tạo Path chữ
 	GraphicsPath path;
-	if (this->getFontStyle() == "italic")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleItalic, this->getFontSize() / 1.05, textPosition, &stringFormat);
-	else if (this->getFontStyle() == "bold")
-		path.AddString(wContent.c_str(), -1, &WFF, FontStyleBold, this->getFontSize() / 1.05, textPosition, &stringFormat);
-	else path.AddString(wContent.c_str(), -1, &WFF, FontStyleRegular, this->getFontSize() / 1.05, textPosition, &stringFormat);
+	path.AddString(
+		wContent.c_str(),
+		-1,
+		&WFF,
+		fontStyle,
+		fSize / 1.05f,
+		textPosition,
+		&stringFormat
+	);
 
-	Pen penText(Color(this->getStroke().getStrokeColor().opacity * 255, this->getStroke().getStrokeColor().r, this->getStroke().getStrokeColor().g, this->getStroke().getStrokeColor().b), this->getStroke().getStrokeWidth());
-	SolidBrush fillText(Color(this->getColor().opacity * 255, this->getColor().r, this->getColor().g, this->getColor().b));
+	// 6. Tạo Pen và Brush
+	color sColor = this->getStroke().getStrokeColor();
+	color fColor = this->getColor();
+
+	Pen penText(Color(sColor.opacity * 255, sColor.r, sColor.g, sColor.b), this->getStroke().getStrokeWidth());
+	SolidBrush fillText(Color(fColor.opacity * 255, fColor.r, fColor.g, fColor.b));
+
+	// 7. Áp dụng Transform
 	vector<pair<string, vector<float>>> transVct = this->getTransVct();
-
-	for (auto trans : transVct) {
+	for (const auto& trans : transVct) {
 		float x = 0.0f;
 		if (!trans.second.empty())
 			x = trans.second[0];
+
 		float y = x;
 		if (trans.second.size() == 2)
 			y = trans.second[1];
+
 		if (trans.first == "translate")
 			graphics.TranslateTransform(x, y);
 		else if (trans.first == "rotate")
 			graphics.RotateTransform(x);
-		else graphics.ScaleTransform(x, y);
+		else
+			graphics.ScaleTransform(x, y);
 	}
 
+	// 8. Vẽ hình
 	graphics.SetSmoothingMode(SmoothingModeAntiAlias);
 	graphics.FillPath(&fillText, &path);
 	graphics.DrawPath(&penText, &path);
+
 	graphics.Restore(save);
 }
 
