@@ -161,7 +161,6 @@ LRESULT CALLBACK IntroWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         currentY += 30;
 
         wstring controls = L"• Phím 'I' / 'O': Phóng to / Thu nhỏ\n"
-            L"• Phím Mũi tên: Di chuyển (Pan)\n"
             L"• Phím 'R' / 'L': Xoay hình\n"
             L"• Phím 'D': Reset về mặc định";
         graphics.DrawString(controls.c_str(), -1, &bodyFont, PointF(contentLeft + 20, currentY), &textBrush);
